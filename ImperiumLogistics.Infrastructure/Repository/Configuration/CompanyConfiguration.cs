@@ -35,8 +35,8 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
 
             builder.OwnsOne(e => e.Credential, a =>
             {
-                a.Property(p => p.LoginAttempt).HasColumnName("LoginAttempt");
-                a.Property(p => p.LastDateChanged).HasColumnName("PwdLastDateChanged");
+                a.Property(p => p.LoginAttempt).HasDefaultValue(0).HasColumnName("LoginAttempt");
+                a.Property(p => p.LastDateChanged).HasDefaultValue(DateTime.MinValue).HasColumnName("PwdLastDateChanged");
                 a.Property(p => p.PasswordHash).IsRequired(false).HasColumnName("Password");
             });
         }
