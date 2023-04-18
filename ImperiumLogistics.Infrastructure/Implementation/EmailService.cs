@@ -21,7 +21,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
         {
             _emailSetting = emailSetting.Value;
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(_emailSetting.BaseUrl);
+           // _httpClient.BaseAddress = new Uri(_emailSetting.BaseUrl);
             _httpClient.DefaultRequestHeaders.Accept.Add(new
             MediaTypeWithQualityHeaderValue("application/json"));
         }
