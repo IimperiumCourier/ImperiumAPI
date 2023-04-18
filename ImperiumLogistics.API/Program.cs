@@ -59,14 +59,9 @@ namespace ImperiumLogistics.API
             // Subscribe to the listener with the SubscribeWithAdapter() extension method
             using var disposable = listener.SubscribeWithAdapter(observer);
 
-
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            
 
             //app cors
             app.UseCors("corsapp");
