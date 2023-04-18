@@ -28,8 +28,10 @@ namespace ImperiumLogistics.API
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddHttpClient<ICompanyOnboardingService, CompanyOnboardingService>();
+            builder.Services.AddHttpClient<IEmailService, EmailService>();
 
             builder.Services.AddTransient<ICompanyOnboardingService, CompanyOnboardingService>();
+            builder.Services.AddTransient<IEmailService, EmailService>();
 
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 

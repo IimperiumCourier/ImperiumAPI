@@ -1,4 +1,5 @@
 ﻿using ImperiumLogistics.SharedKernel;
+using ImperiumLogistics.SharedKernel.DDDSharedModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ImperiumLogistics.Domain.CompanyAggregate
 {
-    public class Credential
+    public class Credential: ValueObject<Credential>
     {
         public string PasswordHash { get; private set; }  = string.Empty;
         public int LoginAttempt { get; private set; }

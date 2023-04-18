@@ -22,10 +22,22 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
             builder.OwnsOne(e => e.Owner, a =>
             {
                 a.Property(p => p.FirstName).IsRequired()
-                    .HasColumnName("FirstName");
+                    .HasColumnName("FirstName").HasMaxLength(100);
 
                 a.Property(p => p.LastName).IsRequired(false)
-                 .HasColumnName("LastName");
+                 .HasColumnName("LastName").HasMaxLength(100);
+            });
+
+            builder.OwnsOne(e => e.EmailAddress, a =>
+            {
+                a.Property(p => p.Address).IsRequired().HasColumnName("Address").HasMaxLength(100);
+            });
+
+            builder.OwnsOne(e => e.Credential, a =>
+            {
+                a.Property(p => p.LoginAttempt).HasColumnName("LoginAttempt");
+                a.Property(p => p.LastDateChanged).HasColumnName("PwdLastDateChanged");
+                a.Property(p => p.PasswordHash).IsRequired(false).HasColumnName("Password");
             });
         }
     }
