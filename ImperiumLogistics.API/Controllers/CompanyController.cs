@@ -91,16 +91,21 @@ namespace ImperiumLogistics.API.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
-        [Route("refresh-token/{token}")]
+        [HttpPost]
+        [Route("refresh-token")]
         [ProducesResponseType(typeof(ServiceResponse<RefreshTokenResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
         [Authorize]
-        public async Task<ActionResult> RefreshToken(string token)
+        public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+            }
+
             var accesstoken = HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
-            var res = await _onboardingService.RefreshToken(accesstoken, token);
+            var res = await _onboardingService.RefreshToken(accesstoken, request.RefreshToken);
 
             if (!res.IsSuccessful)
             {
