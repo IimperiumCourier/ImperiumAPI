@@ -163,6 +163,13 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             company.UpdateRefreshToken(_tokenGenerator.GenerateRefreshToken());
             _companyRepo.Update(company);
 
+
+            var response = await _companyRepo.Save();
+
+            if (response < 1)
+            {
+                return ServiceResponse<RefreshTokenResponse>.Error("An error occurred while completing request.");
+            }
             var tokenData = _tokenGenerator.GenerateToken(company.EmailAddress.Address, company.Id, UserRoles.Company);
 
             return ServiceResponse<RefreshTokenResponse>.Success(RefreshTokenResponse.GetRefreshToken(tokenData, company.RefreshToken));
