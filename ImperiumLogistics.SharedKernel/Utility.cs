@@ -20,8 +20,7 @@ namespace ImperiumLogistics.SharedKernel
             var emailBody = path.ReadToEnd();
             emailBody = emailBody
                 .Replace("[Customer Name]", customerName.ToSentenceCase())
-                  .Replace("[Your Service URL]", serviceUrl)
-                  .Replace("[Your Company Name]", companyName.ToSentenceCase());
+                  .Replace("[Your Service URL]", serviceUrl);
 
             return emailBody;
         }
