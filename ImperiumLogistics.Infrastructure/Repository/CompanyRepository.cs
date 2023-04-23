@@ -18,10 +18,10 @@ namespace ImperiumLogistics.Infrastructure.Repository
         }
 
         public Task<Company> Add(string phoneNo, string houseAddress, string city,
-                                 string state, string firstName, string lastName,
+                                 string state, string fullName, string companyName,
                                  string emailAddress)
         {
-            var company = Company.Create(phoneNo,houseAddress,city, state, firstName, lastName, emailAddress);
+            var company = Company.Create(phoneNo,houseAddress,city, state, fullName, companyName, emailAddress);
             dbContext.Company.AddAsync(company);
 
             return Task.FromResult(company);

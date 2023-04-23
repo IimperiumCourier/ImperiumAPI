@@ -10,5 +10,6 @@ namespace ImperiumLogistics.SharedKernel.Setting
     {
         public string BaseUrl { get; set; } = string.Empty;
         public string Sender { get; set; } = string.Empty;
+        public string PasswordUrl { get; set; } = string.Empty;
     }
 }

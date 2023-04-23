@@ -18,14 +18,12 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
             builder.Property(e => e.City).IsRequired().HasMaxLength(20);
             builder.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
             builder.Property(e => e.State).IsRequired().HasMaxLength(20);
+            builder.Property(e => e.Name).IsRequired().HasMaxLength(100);
 
             builder.OwnsOne(e => e.Owner, a =>
             {
-                a.Property(p => p.FirstName).IsRequired()
-                    .HasColumnName("FirstName").HasMaxLength(100);
-
-                a.Property(p => p.LastName).IsRequired(false)
-                 .HasColumnName("LastName").HasMaxLength(100);
+                a.Property(p => p.FullName).IsRequired()
+                    .HasColumnName("FullName").HasMaxLength(100);
             });
 
             builder.OwnsOne(e => e.EmailAddress, a =>

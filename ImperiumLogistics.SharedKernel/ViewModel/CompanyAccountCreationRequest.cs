@@ -8,8 +8,8 @@ namespace ImperiumLogistics.SharedKernel.ViewModel
 {
     public class CompanyAccountCreationRequest
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string ContactFullName { get; set; }
+        public string CompanyName { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
         public string State { get; set; }

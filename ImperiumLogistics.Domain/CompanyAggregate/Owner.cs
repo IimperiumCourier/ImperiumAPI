@@ -1,4 +1,5 @@
-﻿using ImperiumLogistics.SharedKernel.DDDSharedModel;
+﻿using ImperiumLogistics.SharedKernel;
+using ImperiumLogistics.SharedKernel.DDDSharedModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,11 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
 {
     public class Owner : ValueObject<Owner>
     {
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
+        public string FullName { get; private set; }
 
-        public static Owner Add(string firstName, string lastName)
+        public static Owner Add(string fullName)
         {
-            return new Owner { FirstName = firstName, LastName = lastName };
+            return new Owner { FullName = fullName.ToSentenceCase() };
         }
     }
 }

@@ -12,8 +12,8 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
         Task<Company?> GetById(Guid id);
         Task<Company?> GetByEmail(string email);
         Task<Company> Add(string phoneNo, string houseAddress, string city,
-                                     string state, string firstName, string lastName,
-                                     string emailAddress);
+                                 string state, string fullName, string companyName,
+                                 string emailAddress);
         void Update(Company company);
         Task<int> Save();
         Task<bool> HasCompanyAccount(string searchCriteria);
