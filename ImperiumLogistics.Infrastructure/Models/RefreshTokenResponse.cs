@@ -13,6 +13,7 @@ namespace ImperiumLogistics.Infrastructure.Models
 
         public static RefreshTokenResponse GetRefreshToken(string accessToken, string refreshToken)
         {
-            return new RefreshTokenResponse { AccessToken = accessToken,RefreshToken = refreshToken };
+            return new RefreshTokenResponse { AccessToken = accessToken, RefreshToken = refreshToken };
+        }
     }
 }

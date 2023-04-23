@@ -19,6 +19,8 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
             builder.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
             builder.Property(e => e.State).IsRequired().HasMaxLength(20);
             builder.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            builder.Property(e => e.RefreshToken).IsRequired(false).HasMaxLength(500);
+            builder.Property(e => e.RefreshTokenExpiryTime).HasDefaultValue(DateTime.MinValue);
 
             builder.OwnsOne(e => e.Owner, a =>
             {
