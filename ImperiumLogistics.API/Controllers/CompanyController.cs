@@ -92,15 +92,15 @@ namespace ImperiumLogistics.API.Controllers
         }
 
         [HttpGet]
-        [Route("refresh-token")]
+        [Route("refresh-token/{token}")]
         [ProducesResponseType(typeof(ServiceResponse<RefreshTokenResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
         [Authorize]
-        public async Task<ActionResult> RefreshToken()
+        public async Task<ActionResult> RefreshToken(string token)
         {
             var accesstoken = HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
-            var res = await _onboardingService.RefreshToken(accesstoken);
+            var res = await _onboardingService.RefreshToken(accesstoken, token);
 
             if (!res.IsSuccessful)
             {

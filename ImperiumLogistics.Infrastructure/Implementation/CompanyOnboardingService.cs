@@ -138,9 +138,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 .GetResponse(tokenData, company.RefreshToken, company.Name, company.EmailAddress.Address, company.PhoneNumber));
         }
 
-        public async Task<ServiceResponse<RefreshTokenResponse>> RefreshToken(string token)
+        public async Task<ServiceResponse<RefreshTokenResponse>> RefreshToken(string accessToken, string refreshToken)
         {
-            var claims = _tokenGenerator.ValidateToken(token);
+            var claims = _tokenGenerator.ValidateToken(accessToken);
             if (claims is null || claims.Count <= 0)
             {
                 return ServiceResponse<RefreshTokenResponse>.Error("Something went wrong, token is not valid.");
@@ -155,7 +155,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
 
             
 
-            if(company.HasNoRefreshToken() || company.HasExpiredRefreshToken())
+            if(company.HasNoRefreshToken() || company.HasExpiredRefreshToken() || company.RefreshToken != refreshToken)
             {
                 return ServiceResponse<RefreshTokenResponse>.Error("Invalid access token or refresh token");
             }

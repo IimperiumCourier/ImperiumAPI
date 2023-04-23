@@ -12,7 +12,7 @@ namespace ImperiumLogistics.SharedKernel
         public static int RefreshTokenValidityInDays = 1;
         public static DateTime GetNigerianTime() => DateTime.UtcNow.AddHours(1);
 
-        public const string WelcomeTemplatePath = "WelcomeTemplate.html";
+        public const string WelcomeTemplatePath = @"Templates\WelcomeTemplate.html";
 
         public static string WelcomeTemplate(string customerName, string companyName, string serviceUrl)
         {

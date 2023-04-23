@@ -81,7 +81,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             };
 
             var securityToken = new JwtSecurityTokenHandler().ValidateToken(token, tokenValidationParams, out validatedToken);
-            if (validatedToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if (validatedToken is not JwtSecurityToken jwtSecurityToken)
             {
                 return null; 
             }
