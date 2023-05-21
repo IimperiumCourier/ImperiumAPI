@@ -20,6 +20,8 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
             builder.Property(e => e.PlacedBy).IsRequired();
             builder.Property(e => e.TrackingNumber).IsRequired().HasMaxLength(28);
             builder.Property(e => e.LastDateUpdated).HasDefaultValue(DateTime.MinValue);
+            builder.Property(e => e.NumberOfItems).IsRequired();
+            builder.Property(e => e.Weight).IsRequired();
 
             builder.OwnsOne(e => e.DeliveryAddress, a =>
             {

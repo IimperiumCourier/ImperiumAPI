@@ -8,6 +8,8 @@ namespace ImperiumLogistics.Domain.PackageAggregate.DTO
 {
     public class PackageDto
     {
+        public int NumberOfItems { get; set; }
+        public decimal WeightOfPackage { get; set; }
         public Guid PackagePlacedBy { get; set; }
         public string PackageDescription { get; set; }
         public string DeliveryAddress { get; set; }

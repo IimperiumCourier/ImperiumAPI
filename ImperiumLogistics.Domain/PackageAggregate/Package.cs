@@ -20,6 +20,8 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         public string Status { get; private set; }
         public DateTime LastDateUpdated { get; private set; }
         public string TrackingNumber { get; private set; }
+        public int NumberOfItems { get; private set; }
+        public decimal Weight { get; private set; }
 
         public Package(Guid id): base(id)
         {
@@ -52,7 +54,9 @@ namespace ImperiumLogistics.Domain.PackageAggregate
                 Description = package.PackageDescription.ToSentenceCase(),
                 Status = PackageStatus.AvailableForPickUp.GetString(),
                 PlacedBy = package.PackagePlacedBy,
-                TrackingNumber = TrackingNumberGenerator.GenerateTrackingNumber()
+                TrackingNumber = TrackingNumberGenerator.GenerateTrackingNumber(),
+                NumberOfItems = package.NumberOfItems,
+                Weight = package.WeightOfPackage
             };
         }
 
