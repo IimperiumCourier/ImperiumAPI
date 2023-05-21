@@ -11,6 +11,7 @@ using System.Net.Mime;
 
 namespace ImperiumLogistics.API.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -176,7 +177,8 @@ namespace ImperiumLogistics.API.Controllers
         [Route("description")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdatePackageStatus([FromBody] CreateDescriptionModel model)
+        [AllowAnonymous]
+        public async Task<ActionResult> AddPackageDescription([FromBody] CreateDescriptionModel model)
         {
             if (!ModelState.IsValid)
             {
