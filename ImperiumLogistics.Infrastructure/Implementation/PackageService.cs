@@ -62,7 +62,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 PickUpLandMark = e.PickUpAddress.LandMark,
                 PickUpState = e.PickUpAddress.State,
                 TrackingNumber = e.TrackingNumber,
-                Id = e.Id
+                Id = e.Id,
+                NumberOfItems = e.NumberOfItems,
+                WeightOfPackage = e.Weight
             }).ToList();
 
             return ServiceResponse<List<PackageQueryResponse>>.Success(_data);
@@ -93,7 +95,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 PickUpLandMark = query.PickUpAddress.LandMark,
                 PickUpState = query.PickUpAddress.State,
                 TrackingNumber = query.TrackingNumber,
-                Id = query.Id
+                Id = query.Id,
+                NumberOfItems = query.NumberOfItems,
+                WeightOfPackage = query.Weight
             };
 
             return ServiceResponse<PackageQueryResponse>.Success(response);
@@ -124,7 +128,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 PickUpLandMark = query.PickUpAddress.LandMark,
                 PickUpState = query.PickUpAddress.State,
                 TrackingNumber = query.TrackingNumber,
-                Id = query.Id
+                Id = query.Id,
+                WeightOfPackage = query.Weight,
+                NumberOfItems = query.NumberOfItems
             };
 
             return ServiceResponse<PackageQueryResponse>.Success(response);
