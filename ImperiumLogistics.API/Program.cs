@@ -1,5 +1,6 @@
 using ImperiumLogistics.API.Diagnostics;
 using ImperiumLogistics.Domain.CompanyAggregate;
+using ImperiumLogistics.Domain.PackageAggregate;
 using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Implementation;
 using ImperiumLogistics.Infrastructure.Repository;
@@ -71,9 +72,13 @@ namespace ImperiumLogistics.API
             builder.Services.AddHttpClient<IEmailService, EmailService>();
 
             builder.Services.AddTransient<ICompanyOnboardingService, CompanyOnboardingService>();
+            builder.Services.AddTransient<IPackageService, PackageService>();
+            builder.Services.AddTransient<IPackageDescriptionService, PackageDescriptionService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
 
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<IPackageRepository, PackageRepository>();
+            builder.Services.AddScoped<IPackageDescriptionRepo, PackageDescriptionRepository>();
 
             var connectionString = builder.Configuration.GetConnectionString("ImperiumDbString");
             builder.Services.AddDbContext<ImperiumDbContext>(x => x.UseSqlServer(connectionString));

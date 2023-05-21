@@ -1,4 +1,5 @@
 ﻿using ImperiumLogistics.Domain.CompanyAggregate;
+using ImperiumLogistics.Domain.PackageAggregate;
 using ImperiumLogistics.Infrastructure.Repository.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,10 +19,14 @@ namespace ImperiumLogistics.Infrastructure.Repository.Context
         }
 
         public DbSet<Company> Company { get; set; }
+        public DbSet<Package> Package { get; set; }
+        public DbSet<PackageDescription> PackageDescription { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new CompanyConfiguration());
+            modelBuilder.ApplyConfiguration(new PackageConfiguration());
+            modelBuilder.ApplyConfiguration(new PackageDescriptionConfiguration());
         }
     }
 }
