@@ -22,6 +22,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         public string TrackingNumber { get; private set; }
         public int NumberOfItems { get; private set; }
         public decimal Weight { get; private set; }
+        public string QRCode { get; private set; }
 
         public Package(Guid id): base(id)
         {
@@ -64,6 +65,17 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         {
             Status = status.GetString();
             LastDateUpdated = Utility.GetNigerianTime();
+        }
+
+        public void GenerateQRCode(string url)
+        {
+            string _uri = $"{url}{TrackingNumber}";
+            QRCode = Utility.CompressToBase64(Utility.GenerateQRCode(_uri));
+        }
+
+        public string GetQRCode()
+        {
+            return Utility.DecompressFromBase64(QRCode);
         }
     }
 }

@@ -3,6 +3,7 @@ using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Models;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Enums;
+using ImperiumLogistics.SharedKernel.Query;
 using ImperiumLogistics.SharedKernel.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +28,7 @@ namespace ImperiumLogistics.API.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
@@ -90,14 +92,14 @@ namespace ImperiumLogistics.API.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
-        [ProducesResponseType(typeof(ServiceResponse<List<PackageQueryResponse>>), StatusCodes.Status200OK)]
+        [HttpPost]
+        [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         public ActionResult GetPackages([FromBody] PackageQueryRequest queryRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ServiceResponse<List<PackageQueryResponse>>.Error("Request is invalid."));
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
             }
 
             var res = _packageService.GetAllPackages(queryRequest);
@@ -132,38 +134,17 @@ namespace ImperiumLogistics.API.Controllers
         }
 
         [HttpPost]
-        [Route("id/{packageid}")]
+        [Route("update")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdatePackageStatusUsingID(Guid packageid, [FromQuery] PackageStatus packageStatus)
+        public async Task<ActionResult> UpdatePackageStatus([FromBody] UpdatePackageUsingTrackingNum model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
             }
 
-            var res = await _packageService.UpdatePackageStatus(packageid, packageStatus);
-
-            if (!res.IsSuccessful)
-            {
-                return BadRequest(res);
-            }
-
-            return Ok(res);
-        }
-
-        [HttpPost]
-        [Route("trackingnumber/{trackingnum}")]
-        [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdatePackageStatus(string trackingnum, [FromQuery] PackageStatus packageStatus)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
-            }
-
-            var res = await _packageService.UpdatePackageStatus(trackingnum, packageStatus);
+            var res = await _packageService.UpdatePackageStatus(model.TrackingNumber, model.Status);
 
             if (!res.IsSuccessful)
             {

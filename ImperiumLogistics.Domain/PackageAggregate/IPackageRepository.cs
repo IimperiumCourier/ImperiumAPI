@@ -11,8 +11,8 @@ namespace ImperiumLogistics.Domain.PackageAggregate
 {
     public interface IPackageRepository
     {
+        IQueryable<Package> GetAllByCompanyID(Guid placedBy);
         IQueryable<Package> GetAll();
-        IQueryable<Package> GetAll(DateTime from, DateTime to, Guid placedBy);
         Task<Package?> GetById(Guid id);
         Task<Package?> GetByTrackNumber(string number);
         Task<Package> Add(PackageDto package);

@@ -1,10 +1,13 @@
 ﻿using Azure;
+using Humanizer;
 using ImperiumLogistics.Domain.PackageAggregate;
 using ImperiumLogistics.Domain.PackageAggregate.DTO;
 using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Models;
+using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Enums;
+using ImperiumLogistics.SharedKernel.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,19 +37,31 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             return ServiceResponse<string>.Success($"Package was saved successfully. You can track your package using {response.TrackingNumber}.");
         }
 
-        public ServiceResponse<List<PackageQueryResponse>> GetAllPackages(PackageQueryRequest queryRequest)
+        public ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackages(PackageQueryRequest queryRequest)
         {
-            IQueryable<Package> response;
-            if(!queryRequest.UseDateForFilter())
+            PagedQueryResult<PackageQueryResponse> _result = new PagedQueryResult<PackageQueryResponse>();
+            IQueryable<Package> response = _packageRepository.GetAllByCompanyID(queryRequest.ComanyID);
+            if(queryRequest.TextFilter != null)
             {
-                return ServiceResponse<List<PackageQueryResponse>>.Error("An error occurred while retrieving all packages.");
+                string keyword = queryRequest?.TextFilter?.Keyword?.ToSentenceCase() ?? string.Empty;
+                response = response.Where(e => e.Description.Contains(keyword));
             }
-            else
+            
+            if(queryRequest.DateFilter != null)
             {
-                response = _packageRepository.GetAll(queryRequest.From, queryRequest.To, queryRequest.ComanyID);
+                response = response.Where(item => item.DateCreated >= queryRequest.DateFilter.From &&
+                                                  item.DateCreated <= queryRequest.DateFilter.To);
             }
 
-            var _data = response.Select(e => new PackageQueryResponse
+            var result = response.ToPagedResult(queryRequest.PagedQuery.PageNumber, queryRequest.PagedQuery.PageSize);
+
+            if(result.TotalItemCount <= 0)
+            {
+                return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(new PagedQueryResult<PackageQueryResponse> 
+                { Items = new List<PackageQueryResponse>() }, "There were no packages found.");
+            }
+
+            var _data = result.Items.Select(e => new PackageQueryResponse
             {
                 CustomerFirstName = e.Cusomer.FirstName,
                 CustomerLastName = e.Cusomer.LastName,
@@ -67,7 +82,15 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 WeightOfPackage = e.Weight
             }).ToList();
 
-            return ServiceResponse<List<PackageQueryResponse>>.Success(_data);
+            _result.Items = _data;
+            _result.TotalItemCount = result.TotalItemCount;
+            _result.CurrentPageNumber = result.CurrentPageNumber;
+            _result.CurrentPageSize = result.CurrentPageSize;
+            _result.TotalPageCount = result.TotalPageCount;
+            _result.HasPrevious = result.HasPrevious;
+            _result.HasNext = result.HasNext;
+
+            return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(_result);
         }
 
         public async Task<ServiceResponse<PackageQueryResponse>> GetPackage(string trackingNumber)

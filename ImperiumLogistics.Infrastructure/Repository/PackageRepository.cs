@@ -32,10 +32,9 @@ namespace ImperiumLogistics.Infrastructure.Repository
             return from package in dbContext.Package select package;
         }
 
-        public IQueryable<Package> GetAll(DateTime from, DateTime to, Guid placedBy)
+        public IQueryable<Package> GetAllByCompanyID(Guid placedBy)
         {
-            return dbContext.Package.Where(item => item.PlacedBy == placedBy && 
-                                                   (item.DateCreated >= from && item.DateCreated <= to));
+            return dbContext.Package.Where(item => item.PlacedBy == placedBy);
         }
 
         public Task<Package?> GetById(Guid id)
