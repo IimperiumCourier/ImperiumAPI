@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper.Configuration.Annotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,12 +14,11 @@ namespace ImperiumLogistics.SharedKernel.Query
         public PagedQueryRequest? PagedQuery { get; set; }
         public DateFilter? DateFilter { get; set; }
         public SearchFilter? TextFilter { get; set; }
-
-        [Required(ErrorMessage = "Company ID must be set")]
-        public Guid ComanyID { get; set; }
-
-        //public bool HasDateFilter() => DateFilter != null;
-        //public bool HasSearchFilter() => DateFilter != null;
-
     }
+
+    public class PackageQueryRequestDTO : PackageQueryRequest
+    {
+        public Guid ComanyID { get; set; }
+    }
+
 }

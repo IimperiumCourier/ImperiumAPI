@@ -8,7 +8,9 @@ using ImperiumLogistics.SharedKernel.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace ImperiumLogistics.API.Controllers
 {
@@ -102,7 +104,20 @@ namespace ImperiumLogistics.API.Controllers
                 return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
             }
 
-            var res = _packageService.GetAllPackages(queryRequest);
+            var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
+            if (companyID == null)
+            {
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
+            }
+            var data = new PackageQueryRequestDTO
+            {
+                ComanyID = Guid.Parse(companyID.Value),
+                DateFilter = queryRequest.DateFilter,
+                PagedQuery = queryRequest.PagedQuery,
+                TextFilter = queryRequest.TextFilter
+            };
+
+            var res = _packageService.GetAllPackages(data);
 
             if (!res.IsSuccessful)
             {

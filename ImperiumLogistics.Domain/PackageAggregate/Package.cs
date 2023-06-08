@@ -36,7 +36,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate
 
         public static Package GetPackage(PackageDto package)
         {
-            return new Package
+            var _package = new Package
             {
                 Cusomer = PackageCusomer.GetCusomer(package.CustomerFirstName.ToSentenceCase(),
                                                     package.CustomerLastName.ToSentenceCase(),
@@ -59,6 +59,11 @@ namespace ImperiumLogistics.Domain.PackageAggregate
                 NumberOfItems = package.NumberOfItems,
                 Weight = package.WeightOfPackage
             };
+
+            string _serializedString = package.ToJson();
+            _package.QRCode = Utility.CompressToBase64(Utility.GenerateQRCode(_serializedString));
+
+            return _package;
         }
 
         public void SetStatus(PackageStatus status)

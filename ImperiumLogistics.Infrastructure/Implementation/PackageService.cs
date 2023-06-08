@@ -37,7 +37,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             return ServiceResponse<string>.Success($"Package was saved successfully. You can track your package using {response.TrackingNumber}.");
         }
 
-        public ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackages(PackageQueryRequest queryRequest)
+        public ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackages(PackageQueryRequestDTO queryRequest)
         {
             PagedQueryResult<PackageQueryResponse> _result = new PagedQueryResult<PackageQueryResponse>();
             IQueryable<Package> response = _packageRepository.GetAllByCompanyID(queryRequest.ComanyID);
@@ -120,7 +120,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 TrackingNumber = query.TrackingNumber,
                 Id = query.Id,
                 NumberOfItems = query.NumberOfItems,
-                WeightOfPackage = query.Weight
+                WeightOfPackage = query.Weight,
+                PackageStatus = query.Status,
+                QRCode = query.QRCode
             };
 
             return ServiceResponse<PackageQueryResponse>.Success(response);
@@ -153,7 +155,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 TrackingNumber = query.TrackingNumber,
                 Id = query.Id,
                 WeightOfPackage = query.Weight,
-                NumberOfItems = query.NumberOfItems
+                NumberOfItems = query.NumberOfItems,
+                PackageStatus = query.Status,
+                QRCode = query.QRCode
             };
 
             return ServiceResponse<PackageQueryResponse>.Success(response);

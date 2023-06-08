@@ -17,7 +17,7 @@ namespace ImperiumLogistics.Infrastructure.Abstract
         Task<ServiceResponse<PackageQueryResponse>> GetPackage(string trackingNumber);
         Task<ServiceResponse<PackageQueryResponse>> GetPackage(Guid packageID);
         Task<ServiceResponse<string>> UpdatePackageStatus(Guid id, PackageStatus packageStatus);
-        ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackages(PackageQueryRequest queryRequest);
+        ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackages(PackageQueryRequestDTO queryRequest);
         Task<ServiceResponse<string>> UpdatePackageStatus(string trackingNumber, PackageStatus packageStatus);
     }
 }

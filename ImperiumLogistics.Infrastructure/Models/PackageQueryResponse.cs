@@ -11,5 +11,6 @@ namespace ImperiumLogistics.Infrastructure.Models
     {
         public Guid Id { get; set; }
         public string TrackingNumber { get; set; }
+        public string QRCode { get; set; }
     }
 }
