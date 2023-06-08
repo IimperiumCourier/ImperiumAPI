@@ -49,6 +49,11 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
 
         public void AddPassword(string password)
         {
+            if(Credential is null)
+            {
+                EmailVerified();
+            }
+
             Credential = Credential.Add(password);
         }
 
