@@ -54,7 +54,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                     { Items = new List<PackageQueryResponse>() }, "There were no packages found.");
                 }
 
-                var _data = result.Items.Select(e => PackageResponseMapper.GetPackageQueryResponse(e)).ToList();
+                var _data = result.Items.Select(e => PackageResponseMapper.GetPackageQueryResponseV2(e)).ToList();
 
                 _result.Items = _data;
                 _result.TotalItemCount = result.TotalItemCount;

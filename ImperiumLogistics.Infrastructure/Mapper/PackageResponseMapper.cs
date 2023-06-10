@@ -34,5 +34,29 @@ namespace ImperiumLogistics.Infrastructure.Mapper
                 QRCode = package.GetQRCode()
             };
         }
+
+        public static PackageQueryResponse GetPackageQueryResponseV2(Package package)
+        {
+            return new PackageQueryResponse
+            {
+                CustomerFirstName = package.Cusomer.FirstName,
+                CustomerLastName = package.Cusomer.LastName,
+                CustomerPhoneNumber = package.Cusomer.PhoneNumber,
+                DeliveryAddress = package.DeliveryAddress.Address,
+                DeliveryCity = package.DeliveryAddress.City,
+                DeliveryLandMark = package.DeliveryAddress.LandMark,
+                DeliveryState = package.DeliveryAddress.State,
+                PackageDescription = package.Description,
+                PackagePlacedBy = package.PlacedBy,
+                PickUpAddress = package.PickUpAddress.Address,
+                PickUpCity = package.PickUpAddress.City,
+                PickUpLandMark = package.PickUpAddress.LandMark,
+                PickUpState = package.PickUpAddress.State,
+                TrackingNumber = package.TrackingNumber,
+                Id = package.Id,
+                NumberOfItems = package.NumberOfItems,
+                WeightOfPackage = package.Weight
+            };
+        }
     }
 }
