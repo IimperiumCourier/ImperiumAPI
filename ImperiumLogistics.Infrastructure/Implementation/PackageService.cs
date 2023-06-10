@@ -4,6 +4,7 @@ using ImperiumLogistics.Domain.PackageAggregate;
 using ImperiumLogistics.Domain.PackageAggregate.DTO;
 using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Models;
+using ImperiumLogistics.Infrastructure.PackageHandlers;
 using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Enums;
@@ -41,17 +42,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
         {
             PagedQueryResult<PackageQueryResponse> _result = new PagedQueryResult<PackageQueryResponse>();
             IQueryable<Package> response = _packageRepository.GetAllByCompanyID(queryRequest.ComanyID);
-            if(queryRequest.TextFilter != null)
-            {
-                string keyword = queryRequest?.TextFilter?.Keyword?.ToSentenceCase() ?? string.Empty;
-                response = response.Where(e => e.Description.Contains(keyword));
-            }
-            
-            if(queryRequest.DateFilter != null)
-            {
-                response = response.Where(item => item.DateCreated >= queryRequest.DateFilter.From &&
-                                                  item.DateCreated <= queryRequest.DateFilter.To);
-            }
+
+            var packageFilters = HandlerFactory.GetPackageFilters();
+            packageFilters.Apply(response, queryRequest);
 
             var result = response.ToPagedResult(queryRequest.PagedQuery.PageNumber, queryRequest.PagedQuery.PageSize);
 
