@@ -11,15 +11,19 @@ namespace ImperiumLogistics.Infrastructure.PackageHandlers
 {
     internal class DateFilter : PackageFilterHandler
     {
-        public override void Apply(IQueryable<Package> data, PackageQueryRequestDTO queryRequest)
+        public override void Apply(ref IQueryable<Package> data, PackageQueryRequestDTO queryRequest)
         {
             if (queryRequest.DateFilter != null)
             {
-                data = data.Where(item => item.DateCreated >= queryRequest.DateFilter.From &&
+                var _data = data.Where(item => item.DateCreated >= queryRequest.DateFilter.From &&
                                                   item.DateCreated <= queryRequest.DateFilter.To);
-            }else if(successor != null)
+
+                data = _data;
+            }
+            
+            if(successor != null)
             {
-                successor.Apply(data, queryRequest);
+                successor.Apply(ref data, queryRequest);
             }
         }
     }

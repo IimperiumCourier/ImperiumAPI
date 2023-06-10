@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ImperiumLogistics.Infrastructure.Abstract
 {
-    public interface ICompanyOnboardingService
+    public interface ICompanyService
     {
         Task<ServiceResponse<string>> CreateAccount(CompanyAccountCreationRequest request);
         Task<ServiceResponse<AuthenticationResponse>> CreatePassword(CompanyPasswordCreationRequest request);

@@ -1,5 +1,6 @@
 ﻿using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.DDDSharedModel;
+using ImperiumLogistics.SharedKernel.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

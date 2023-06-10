@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,21 +9,21 @@ namespace ImperiumLogistics.Domain.PackageAggregate.DTO
 {
     public class PackageDto
     {
-        public string PackageStatus { get; set; }
         public int NumberOfItems { get; set; }
         public decimal WeightOfPackage { get; set; }
+        [JsonIgnore]
         public Guid PackagePlacedBy { get; set; }
-        public string PackageDescription { get; set; }
-        public string DeliveryAddress { get; set; }
-        public string DeliveryCity { get; set; }
-        public string DeliveryState { get; set; }
-        public string DeliveryLandMark { get; set; }
-        public string CustomerFirstName { get; set; }
-        public string CustomerLastName { get; set; }
-        public string CustomerPhoneNumber { get; set; }
-        public string PickUpAddress { get; set; }
-        public string PickUpCity { get; set; }
-        public string PickUpState { get;set; }
-        public string PickUpLandMark { get;set; }
+        public string PackageDescription { get; set; } = string.Empty;
+        public string DeliveryAddress { get; set; } = string.Empty;
+        public string DeliveryCity { get; set; } = string.Empty;
+        public string DeliveryState { get; set; } = string.Empty;
+        public string DeliveryLandMark { get; set; } = string.Empty;
+        public string CustomerFirstName { get; set; } = string.Empty;
+        public string CustomerLastName { get; set; } = string.Empty;
+        public string CustomerPhoneNumber { get; set; } = string.Empty;
+        public string PickUpAddress { get; set; } = string.Empty;
+        public string PickUpCity { get; set; } = string.Empty;
+        public string PickUpState { get; set; } = string.Empty;
+        public string PickUpLandMark { get; set; } = string.Empty;
     }
 }

@@ -1,19 +1,13 @@
-﻿using Azure;
-using Humanizer;
-using ImperiumLogistics.Domain.PackageAggregate;
+﻿using ImperiumLogistics.Domain.PackageAggregate;
 using ImperiumLogistics.Domain.PackageAggregate.DTO;
 using ImperiumLogistics.Infrastructure.Abstract;
+using ImperiumLogistics.Infrastructure.Mapper;
 using ImperiumLogistics.Infrastructure.Models;
 using ImperiumLogistics.Infrastructure.PackageHandlers;
 using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Enums;
 using ImperiumLogistics.SharedKernel.Query;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImperiumLogistics.Infrastructure.Implementation
 {
@@ -41,49 +35,42 @@ namespace ImperiumLogistics.Infrastructure.Implementation
         public ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackages(PackageQueryRequestDTO queryRequest)
         {
             PagedQueryResult<PackageQueryResponse> _result = new PagedQueryResult<PackageQueryResponse>();
-            IQueryable<Package> response = _packageRepository.GetAllByCompanyID(queryRequest.ComanyID);
-
-            var packageFilters = HandlerFactory.GetPackageFilters();
-            packageFilters.Apply(response, queryRequest);
-
-            var result = response.ToPagedResult(queryRequest.PagedQuery.PageNumber, queryRequest.PagedQuery.PageSize);
-
-            if(result.TotalItemCount <= 0)
+            if (queryRequest != null)
             {
-                return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(new PagedQueryResult<PackageQueryResponse> 
-                { Items = new List<PackageQueryResponse>() }, "There were no packages found.");
+
+                IQueryable<Package> response = _packageRepository.GetAllByCompanyID(queryRequest.ComanyID);
+
+                var packageFilters = HandlerFactory.GetPackageFilters();
+                packageFilters.Apply(ref response, queryRequest);
+
+                int pageSize = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+                int pageNumber = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+
+                var result = response.ToPagedResult(pageNumber, pageSize);
+
+                if (result.TotalItemCount <= 0)
+                {
+                    return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(new PagedQueryResult<PackageQueryResponse>
+                    { Items = new List<PackageQueryResponse>() }, "There were no packages found.");
+                }
+
+                var _data = result.Items.Select(e => PackageResponseMapper.GetPackageQueryResponse(e)).ToList();
+
+                _result.Items = _data;
+                _result.TotalItemCount = result.TotalItemCount;
+                _result.CurrentPageNumber = result.CurrentPageNumber;
+                _result.CurrentPageSize = result.CurrentPageSize;
+                _result.TotalPageCount = result.TotalPageCount;
+                _result.HasPrevious = result.HasPrevious;
+                _result.HasNext = result.HasNext;
+
+                return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(_result);
+
             }
-
-            var _data = result.Items.Select(e => new PackageQueryResponse
+            else
             {
-                CustomerFirstName = e.Cusomer.FirstName,
-                CustomerLastName = e.Cusomer.LastName,
-                CustomerPhoneNumber = e.Cusomer.PhoneNumber,
-                DeliveryAddress = e.DeliveryAddress.Address,
-                DeliveryCity = e.DeliveryAddress.City,
-                DeliveryLandMark = e.DeliveryAddress.LandMark,
-                DeliveryState = e.DeliveryAddress.State,
-                PackageDescription = e.Description,
-                PackagePlacedBy = e.PlacedBy,
-                PickUpAddress = e.PickUpAddress.Address,
-                PickUpCity = e.PickUpAddress.City,
-                PickUpLandMark = e.PickUpAddress.LandMark,
-                PickUpState = e.PickUpAddress.State,
-                TrackingNumber = e.TrackingNumber,
-                Id = e.Id,
-                NumberOfItems = e.NumberOfItems,
-                WeightOfPackage = e.Weight
-            }).ToList();
-
-            _result.Items = _data;
-            _result.TotalItemCount = result.TotalItemCount;
-            _result.CurrentPageNumber = result.CurrentPageNumber;
-            _result.CurrentPageSize = result.CurrentPageSize;
-            _result.TotalPageCount = result.TotalPageCount;
-            _result.HasPrevious = result.HasPrevious;
-            _result.HasNext = result.HasNext;
-
-            return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(_result);
+                return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid");
+            }
         }
 
         public async Task<ServiceResponse<PackageQueryResponse>> GetPackage(string trackingNumber)
@@ -95,28 +82,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return ServiceResponse<PackageQueryResponse>.Error($"There is no package with tracking number {trackingNumber} .");
             }
 
-            var response = new PackageQueryResponse
-            {
-                CustomerFirstName = query.Cusomer.FirstName,
-                CustomerLastName = query.Cusomer.LastName,
-                CustomerPhoneNumber = query.Cusomer.PhoneNumber,
-                DeliveryAddress = query.DeliveryAddress.Address,
-                DeliveryCity = query.DeliveryAddress.City,
-                DeliveryLandMark = query.DeliveryAddress.LandMark,
-                DeliveryState = query.DeliveryAddress.State,
-                PackageDescription = query.Description,
-                PackagePlacedBy = query.PlacedBy,
-                PickUpAddress = query.PickUpAddress.Address,
-                PickUpCity = query.PickUpAddress.City,
-                PickUpLandMark = query.PickUpAddress.LandMark,
-                PickUpState = query.PickUpAddress.State,
-                TrackingNumber = query.TrackingNumber,
-                Id = query.Id,
-                NumberOfItems = query.NumberOfItems,
-                WeightOfPackage = query.Weight,
-                PackageStatus = query.Status,
-                QRCode = query.QRCode
-            };
+            var response = PackageResponseMapper.GetPackageQueryResponse(query);
 
             return ServiceResponse<PackageQueryResponse>.Success(response);
         }
@@ -130,28 +96,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return ServiceResponse<PackageQueryResponse>.Error($"There is no package with ID {packageID} .");
             }
 
-            var response = new PackageQueryResponse
-            {
-                CustomerFirstName = query.Cusomer.FirstName,
-                CustomerLastName = query.Cusomer.LastName,
-                CustomerPhoneNumber = query.Cusomer.PhoneNumber,
-                DeliveryAddress = query.DeliveryAddress.Address,
-                DeliveryCity = query.DeliveryAddress.City,
-                DeliveryLandMark = query.DeliveryAddress.LandMark,
-                DeliveryState = query.DeliveryAddress.State,
-                PackageDescription = query.Description,
-                PackagePlacedBy = query.PlacedBy,
-                PickUpAddress = query.PickUpAddress.Address,
-                PickUpCity = query.PickUpAddress.City,
-                PickUpLandMark = query.PickUpAddress.LandMark,
-                PickUpState = query.PickUpAddress.State,
-                TrackingNumber = query.TrackingNumber,
-                Id = query.Id,
-                WeightOfPackage = query.Weight,
-                NumberOfItems = query.NumberOfItems,
-                PackageStatus = query.Status,
-                QRCode = query.QRCode
-            };
+            var response = PackageResponseMapper.GetPackageQueryResponse(query);
 
             return ServiceResponse<PackageQueryResponse>.Success(response);
         }

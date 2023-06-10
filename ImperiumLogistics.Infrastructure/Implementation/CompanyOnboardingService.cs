@@ -9,19 +9,20 @@ using ImperiumLogistics.SharedKernel.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ImperiumLogistics.Infrastructure.Implementation
 {
-    public class CompanyOnboardingService : ICompanyOnboardingService
+    public class CompanyService : ICompanyService
     {
         private readonly ICompanyRepository _companyRepo;
         private readonly IEmailService _emailService;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly EmailSetting _emailSetting;
-        public CompanyOnboardingService(ICompanyRepository companyRepository, IEmailService emailService,
+        public CompanyService(ICompanyRepository companyRepository, IEmailService emailService,
                                         ITokenGenerator tokenGenerator, IOptions<EmailSetting> emailSettingOption)
         {
             _companyRepo = companyRepository;
@@ -146,7 +147,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return ServiceResponse<RefreshTokenResponse>.Error("Something went wrong, token is not valid.");
             }
 
-            string _email = claims[0];
+            string _email = claims[JwtRegisteredClaimNames.Name];
             var company = await _companyRepo.GetByEmail(_email);
             if (company is null)
             {

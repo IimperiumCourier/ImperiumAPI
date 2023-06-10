@@ -10,7 +10,7 @@ namespace ImperiumLogistics.Infrastructure.Abstract
     {
         string GenerateToken(string username, Guid? userId, string role);
 
-        List<string>? ValidateToken(string token);
+        Dictionary<string,string>? ValidateToken(string token);
         string GenerateRefreshToken();
     }
 }

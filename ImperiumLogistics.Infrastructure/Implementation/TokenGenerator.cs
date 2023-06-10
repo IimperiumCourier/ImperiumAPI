@@ -60,9 +60,14 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             return new JwtSecurityTokenHandler().WriteToken(securityToken);
         }
 
-        public List<string>? ValidateToken(string token)
+        public Dictionary<string, string>? ValidateToken(string token)
         {
-            var response = new List<string>();
+            if(string.IsNullOrWhiteSpace(token))
+            {
+                return null;
+            }
+
+            var response = new Dictionary<string, string>();
             SecurityToken validatedToken;
             var issuer = configuration.GetSection("JwtSettings:Issuer").Value;
             var audience = configuration.GetSection("JwtSettings:Audience").Value;
@@ -86,10 +91,11 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return null; 
             }
 
+            string name = securityToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value ?? string.Empty;
+            string userID = securityToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value ?? string.Empty;
 
-            response.Add(securityToken.Claims.FirstOrDefault(c => c.Type == "name").Value);
-            response.Add(securityToken.Claims.FirstOrDefault(c => c.Type == "jti").Value);
-            response.Add(securityToken.Claims.FirstOrDefault(c => c.Type.Contains("role")).Value);
+            response.Add(JwtRegisteredClaimNames.Name, name);
+            response.Add(JwtRegisteredClaimNames.Jti, userID);
 
             return response;
         }

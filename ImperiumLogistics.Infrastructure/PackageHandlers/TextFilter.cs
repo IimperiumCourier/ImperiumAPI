@@ -13,16 +13,21 @@ namespace ImperiumLogistics.Infrastructure.Handlers
 {
     public class TextFilter : PackageFilterHandler
     {
-        public override void Apply(IQueryable<Package> data, PackageQueryRequestDTO queryRequest)
+        public override void Apply(ref IQueryable<Package> data, PackageQueryRequestDTO queryRequest)
         {
             if (queryRequest.TextFilter != null)
             {
-                string keyword = queryRequest?.TextFilter?.Keyword?.ToSentenceCase() ?? string.Empty;
-                data = data.Where(e => e.Description.Contains(keyword));
+                string _desc = queryRequest?.TextFilter?.Keyword?.ToSentenceCase() ?? string.Empty;
+                string _keyword = queryRequest?.TextFilter?.Keyword ?? string.Empty;
+
+                var _data = data.Where(t => t.TrackingNumber == _keyword);
+
+                data = _data;
             }
-            else if (successor != null)
+           
+            if (successor != null)
             {
-                successor.Apply(data, queryRequest);
+                successor.Apply(ref data, queryRequest);
             }
         }
     }

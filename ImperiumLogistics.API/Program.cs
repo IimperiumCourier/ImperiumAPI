@@ -1,3 +1,4 @@
+using ImperiumLogistics.API.Authorization;
 using ImperiumLogistics.API.Diagnostics;
 using ImperiumLogistics.Domain.CompanyAggregate;
 using ImperiumLogistics.Domain.PackageAggregate;
@@ -68,10 +69,10 @@ namespace ImperiumLogistics.API
 
 
             builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
-            builder.Services.AddHttpClient<ICompanyOnboardingService, CompanyOnboardingService>();
+            builder.Services.AddHttpClient<ICompanyService, CompanyService>();
             builder.Services.AddHttpClient<IEmailService, EmailService>();
 
-            builder.Services.AddTransient<ICompanyOnboardingService, CompanyOnboardingService>();
+            builder.Services.AddTransient<ICompanyService, CompanyService>();
             builder.Services.AddTransient<IPackageService, PackageService>();
             builder.Services.AddTransient<IPackageDescriptionService, PackageDescriptionService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
@@ -118,6 +119,9 @@ namespace ImperiumLogistics.API
 
             // global error handler
             app.UseMiddleware<ErrorHandlerMiddleware>();
+
+            // custom jwt auth middleware
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseHttpsRedirection();
 

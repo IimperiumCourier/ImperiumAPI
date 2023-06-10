@@ -3,21 +3,22 @@ using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Models;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.ViewModel;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using System.Net.Mime;
+using ImperiumLogistics.SharedKernel.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ImperiumLogistics.API.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "GodMode,Company,Admin")]
     public class CompanyController : ControllerBase
     {
-        private readonly ICompanyOnboardingService _onboardingService;
-        public CompanyController(ICompanyOnboardingService onboardingService)
+        private readonly ICompanyService _onboardingService;
+        public CompanyController(ICompanyService onboardingService)
         {
             _onboardingService = onboardingService;
         }
@@ -97,7 +98,6 @@ namespace ImperiumLogistics.API.Controllers
         [ProducesResponseType(typeof(ServiceResponse<RefreshTokenResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
-        [Authorize]
         public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
             if (!ModelState.IsValid)

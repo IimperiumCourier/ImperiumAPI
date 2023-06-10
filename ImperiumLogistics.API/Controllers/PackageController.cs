@@ -17,7 +17,7 @@ namespace ImperiumLogistics.API.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Company,GodMode,Admin")]
     public class PackageController : ControllerBase
     {
         private readonly IPackageService _packageService;
@@ -41,6 +41,12 @@ namespace ImperiumLogistics.API.Controllers
                 return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
             }
 
+            var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
+            if (companyID == null)
+            {
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
+            }
+            package.PackagePlacedBy = Guid.Parse(companyID.Value);
             var res = await _packageService.CreatePackage(package);
 
             if (!res.IsSuccessful)
@@ -107,7 +113,7 @@ namespace ImperiumLogistics.API.Controllers
             var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
             if (companyID == null)
             {
-                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
             }
             var data = new PackageQueryRequestDTO
             {
@@ -152,6 +158,7 @@ namespace ImperiumLogistics.API.Controllers
         [Route("update")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Rider,Admin,GodMode")]
         public async Task<ActionResult> UpdatePackageStatus([FromBody] UpdatePackageUsingTrackingNum model)
         {
             if (!ModelState.IsValid)
@@ -173,7 +180,7 @@ namespace ImperiumLogistics.API.Controllers
         [Route("description")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,GodMode")]
         public async Task<ActionResult> AddPackageDescription([FromBody] CreateDescriptionModel model)
         {
             if (!ModelState.IsValid)

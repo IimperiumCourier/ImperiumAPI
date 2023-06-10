@@ -9,7 +9,8 @@ namespace ImperiumLogistics.SharedKernel
     public static class UserRoles
     {
         public const string Admin = "Admin";
-        public const string User = "User";
+        public const string Rider = "Rider";
         public const string Company = "Company";
+        public const string God = "God";
     }
 }

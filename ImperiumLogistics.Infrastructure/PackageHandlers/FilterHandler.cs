@@ -15,6 +15,6 @@ namespace ImperiumLogistics.Infrastructure.PackageHandlers
         {
             this.successor = successor;
         }
-        public abstract void Apply(IQueryable<Package> data, PackageQueryRequestDTO queryRequest);
+        public abstract void Apply(ref IQueryable<Package> data, PackageQueryRequestDTO queryRequest);
     }
 }
