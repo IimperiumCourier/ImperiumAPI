@@ -23,6 +23,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         public int NumberOfItems { get; private set; }
         public decimal Weight { get; private set; }
         public string QRCode { get; private set; }
+        public DateTime ExpectedDeliveryDate { get; private set; }
 
         public Package(Guid id): base(id)
         {
@@ -36,6 +37,9 @@ namespace ImperiumLogistics.Domain.PackageAggregate
 
         public static Package GetPackage(PackageDto package)
         {
+            string deliveryCity = package.DeliveryCity.ToSentenceCase();
+            string pickUpCity = package.PickUpCity.ToSentenceCase();
+
             var _package = new Package
             {
                 Cusomer = PackageCusomer.GetCusomer(package.CustomerFirstName.ToSentenceCase(),
@@ -57,7 +61,9 @@ namespace ImperiumLogistics.Domain.PackageAggregate
                 PlacedBy = package.PackagePlacedBy,
                 TrackingNumber = TrackingNumberGenerator.GenerateTrackingNumber(),
                 NumberOfItems = package.NumberOfItems,
-                Weight = package.WeightOfPackage
+                Weight = package.WeightOfPackage,
+                ExpectedDeliveryDate = pickUpCity.Contains("Lagos") && deliveryCity.Contains("Lagos") 
+                                        ? Utility.GetNigerianTime().AddDays(3) : Utility.GetNigerianTime().AddDays(7)
             };
 
             string _serializedString = package.ToJson();

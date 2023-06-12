@@ -31,7 +31,10 @@ namespace ImperiumLogistics.Infrastructure.Mapper
                 Id = package.Id,
                 NumberOfItems = package.NumberOfItems,
                 WeightOfPackage = package.Weight,
-                QRCode = package.GetQRCode()
+                QRCode = package.GetQRCode(),
+                ExpectedDeliveryDate= package.ExpectedDeliveryDate,
+                PickupDate = package.DateCreated,
+                Status= package.Status
             };
         }
 
@@ -55,7 +58,10 @@ namespace ImperiumLogistics.Infrastructure.Mapper
                 TrackingNumber = package.TrackingNumber,
                 Id = package.Id,
                 NumberOfItems = package.NumberOfItems,
-                WeightOfPackage = package.Weight
+                WeightOfPackage = package.Weight,
+                ExpectedDeliveryDate = package.ExpectedDeliveryDate,
+                PickupDate = package.DateCreated,
+                Status = package.Status
             };
         }
     }
