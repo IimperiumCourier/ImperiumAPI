@@ -13,7 +13,7 @@ namespace ImperiumLogistics.Infrastructure.Abstract
 {
     public interface IPackageService
     {
-        Task<ServiceResponse<string>> CreatePackage(PackageDto package);
+        Task<ServiceResponse<PackageCreationRes>> CreatePackage(PackageDto package);
         Task<ServiceResponse<PackageQueryResponse>> GetPackage(string trackingNumber);
         Task<ServiceResponse<PackageQueryResponse>> GetPackage(Guid packageID);
         Task<ServiceResponse<string>> UpdatePackageStatus(Guid id, PackageStatus packageStatus);

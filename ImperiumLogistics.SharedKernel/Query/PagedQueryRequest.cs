@@ -10,7 +10,6 @@ namespace ImperiumLogistics.SharedKernel.Query
         /// The page number for the paginated results.  Default is 1.
         /// Setting a number beyond the last page will just return the last page of data.
         /// </summary>
-        public string Keyword { get; set; } = string.Empty;
         public int PageNumber { get; set; } = Utility.DefaultPageNumber;
 
         private int _pageSize = Utility.DefaultPageSize;

@@ -19,17 +19,22 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             _packageRepository = packageRepository;
         }
 
-        public async Task<ServiceResponse<string>> CreatePackage(PackageDto package)
+        public async Task<ServiceResponse<PackageCreationRes>> CreatePackage(PackageDto package)
         {
             var response = await _packageRepository.Add(package);
             var dbResponse = await _packageRepository.Save();
 
             if (dbResponse < 1)
             {
-                return ServiceResponse<string>.Error("An error occurred while saving record.");
+                return ServiceResponse<PackageCreationRes>.Error("An error occurred while saving record.");
             }
 
-            return ServiceResponse<string>.Success($"Package was saved successfully. You can track your package using {response.TrackingNumber}.");
+            string customer = $"{response.Cusomer.FirstName} {response.Cusomer.LastName}";
+            string qrCode = response.GetQRCode();
+
+            var creationRes = PackageCreationRes.CreationResponse(response.TrackingNumber, customer, qrCode);
+
+            return ServiceResponse<PackageCreationRes>.Success(creationRes, $"Package was saved successfully. You can track your package using {response.TrackingNumber}.");
         }
 
         public ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackages(PackageQueryRequestDTO queryRequest)

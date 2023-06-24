@@ -15,17 +15,18 @@ namespace ImperiumLogistics.Infrastructure.Handlers
     {
         public override void Apply(ref IQueryable<Package> data, PackageQueryRequestDTO queryRequest)
         {
-            if (queryRequest.TextFilter != null)
+            var textFilter = queryRequest.TextFilter;
+            if (textFilter != null && !string.IsNullOrWhiteSpace(textFilter.Keyword))
             {
-                string _desc = queryRequest?.TextFilter?.Keyword?.ToSentenceCase() ?? string.Empty;
+                string _desc = textFilter.Keyword.ToSentenceCase();
                 string _keyword = queryRequest?.TextFilter?.Keyword ?? string.Empty;
 
-                var _data = data.Where(t => t.TrackingNumber == _keyword);
+                var _data = data.Where(t => t.TrackingNumber == _keyword || t.Description == _desc);
 
                 data = _data;
             }
            
-            if (successor != null)
+            if (successor != null && queryRequest != null)
             {
                 successor.Apply(ref data, queryRequest);
             }

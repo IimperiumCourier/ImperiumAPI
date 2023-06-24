@@ -31,20 +31,20 @@ namespace ImperiumLogistics.API.Controllers
 
         [HttpPost]
         [Route("create")]
-        [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse<PackageCreationRes>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<ActionResult> Createpackage([FromBody] PackageDto package)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is invalid."));
             }
 
             var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
             if (companyID == null)
             {
-                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
             }
             package.PackagePlacedBy = Guid.Parse(companyID.Value);
             var res = await _packageService.CreatePackage(package);

@@ -13,18 +13,34 @@ namespace ImperiumLogistics.Infrastructure.PackageHandlers
     {
         public override void Apply(ref IQueryable<Package> data, PackageQueryRequestDTO queryRequest)
         {
-            if (queryRequest.DateFilter != null)
+            var dateFilter = queryRequest.DateFilter;
+            if (dateFilter != null && HasValidDates(dateFilter.From, dateFilter.To))
             {
-                var _data = data.Where(item => item.DateCreated >= queryRequest.DateFilter.From &&
-                                                  item.DateCreated <= queryRequest.DateFilter.To);
+                var _data = data.Where(item => item.DateCreated >= dateFilter.From &&
+                                                  item.DateCreated <= dateFilter.To);
 
                 data = _data;
             }
             
-            if(successor != null)
+            if(successor != null && queryRequest != null)
             {
                 successor.Apply(ref data, queryRequest);
             }
+        }
+
+        private bool HasValidDates(DateTime? from, DateTime? to)
+        {
+            if(from == null || from.Value == DateTime.MinValue)
+            {
+                return false;
+            }
+
+            if(to == null || to.Value == DateTime.MinValue)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

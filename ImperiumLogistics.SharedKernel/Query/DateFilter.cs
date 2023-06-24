@@ -8,7 +8,7 @@ namespace ImperiumLogistics.SharedKernel.Query
 {
     public class DateFilter
     {
-        public DateTime From { get; set; } = DateTime.MinValue;
-        public DateTime To { get; set; } = DateTime.MinValue;
+        public DateTime? From { get; set; }
+        public DateTime? To { get; set; }
     }
 }
