@@ -36,7 +36,7 @@ namespace ImperiumLogistics.API.Diagnostics
                         break;
                 }
 
-                await response.WriteAsync("Something went wrong, your request could not be processed.");
+                await response.WriteAsync(error.Message + " "+ error.StackTrace);//("Something went wrong, your request could not be processed.");
             }
         }
     }
