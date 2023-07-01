@@ -197,5 +197,67 @@ namespace ImperiumLogistics.API.Controllers
 
             return Ok(res);
         }
+
+        [HttpPost]
+        [Route("assign")]
+        [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin,GodMode")]
+        public async Task<ActionResult> AssignPackageToRider([FromBody] PackageAssignRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+            }
+            var adminId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
+            if (adminId == null)
+            {
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
+            }
+
+            var res = await _packageService.AssignRiderToPackage(model, Guid.Parse(adminId.Value));
+
+            if (!res.IsSuccessful)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Route("riderlist")]
+        [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Authorize("Admin,Rider,GodMode")]
+        public ActionResult GetPackagesAssignedToRider([FromBody] PackageQueryRequest queryRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
+            }
+
+            var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
+            if (companyID == null)
+            {
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
+            }
+            var data = new PackageQueryRequestDTO
+            {
+                ComanyID = Guid.Parse(companyID.Value),
+                DateFilter = queryRequest.DateFilter,
+                PagedQuery = queryRequest.PagedQuery,
+                TextFilter = queryRequest.TextFilter
+            };
+
+            var res = _packageService.GetAllPackages(data);
+
+            if (!res.IsSuccessful)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
     }
 }

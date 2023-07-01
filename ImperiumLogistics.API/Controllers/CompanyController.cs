@@ -8,6 +8,9 @@ using Microsoft.Net.Http.Headers;
 using System.Net.Mime;
 using ImperiumLogistics.SharedKernel.Enums;
 using Microsoft.AspNetCore.Authorization;
+using ImperiumLogistics.Domain.PackageAggregate.DTO;
+using ImperiumLogistics.Domain.CompanyAggregate;
+using ImperiumLogistics.SharedKernel.Query;
 
 namespace ImperiumLogistics.API.Controllers
 {
@@ -67,6 +70,45 @@ namespace ImperiumLogistics.API.Controllers
             }
 
             return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("analytics")]
+        [ProducesResponseType(typeof(ServiceResponse<BusinessAnalytics>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAnalytics([FromQuery] Guid companyId)
+        {
+            var res = await _onboardingService.GetAnalytics(companyId);
+
+            if (!res.IsSuccessful)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Route("list")]
+        [ProducesResponseType(typeof(ServiceResponse<Company>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public ActionResult GetListOfCompanies([FromBody] QueryRequest queryRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+            }
+
+            var response = _onboardingService.GetAllCompanies(queryRequest);
+            if (!response.IsSuccessful)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
     }
 }

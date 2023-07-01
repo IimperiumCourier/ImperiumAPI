@@ -1,7 +1,9 @@
 ﻿using ImperiumLogistics.Domain.CompanyAggregate;
 using ImperiumLogistics.Domain.PackageAggregate;
 using ImperiumLogistics.Domain.PackageAggregate.DTO;
+using ImperiumLogistics.Infrastructure.Models;
 using ImperiumLogistics.Infrastructure.Repository.Context;
+using ImperiumLogistics.SharedKernel.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -55,6 +57,69 @@ namespace ImperiumLogistics.Infrastructure.Repository
         public void Update(Package package)
         {
             dbContext.Package.Update(package);
+        }
+
+        public IQueryable<Package> GetAllByRiderId(Guid riderId, PackageStatus packageStatus)
+        {
+            string _status = packageStatus.GetString();
+
+            return dbContext.Package.Where(item => (item.PickupRider.RiderId == riderId 
+                                                    || item.DeliveryRider.RiderId == riderId) 
+                                                    && item.Status == _status );
+        }
+
+        public async Task<RiderAnalytics> GetRiderAnalyticsAsync(Guid riderId)
+        {
+            string availForPickUpStatus = PackageStatus.AvailableForPickUp.GetString();
+            string pickedUpStatus = PackageStatus.PickedUp.GetString();
+            string deliveryStatus  = PackageStatus.InDelivery.GetString();
+            string deliveredStatus = PackageStatus.Delivered.GetString();
+
+
+
+            var pickUpCount = await dbContext.Package.CountAsync(e => e.PickupRider.RiderId == riderId &&
+                                                                      e.Status == availForPickUpStatus);
+            var deliveryCount = await dbContext.Package.CountAsync(e => e.DeliveryRider.RiderId == riderId &&
+                                                                      e.Status == deliveredStatus);
+            var pickedUpCount = await dbContext.Package.CountAsync(e => e.PickupRider.RiderId == riderId &&
+                                                                      e.Status == pickedUpStatus);
+            var deliveredCount = await dbContext.Package.CountAsync(e => e.DeliveryRider.RiderId == riderId &&
+                                                                      e.Status == deliveredStatus);
+
+            return new RiderAnalytics
+            {
+                TotalPackageAvailableForDelivery = deliveryCount,
+                TotalPackageAvailableForPickUp = pickUpCount,
+                TotalPackageDelivered = deliveredCount,
+                TotalPackagePickedUp = pickedUpCount
+            };
+        }
+
+        public async Task<BusinessAnalytics> GetBusinessAnalyticsAsync(Guid businessId)
+        {
+            string availForPickUpStatus = PackageStatus.AvailableForPickUp.GetString();
+            string wareHouseStatus = PackageStatus.WareHouse.GetString();
+            string unDeliveredStatus = PackageStatus.UnDelivered.GetString();
+            string deliveredStatus = PackageStatus.Delivered.GetString();
+
+
+
+            var pickUpCount = await dbContext.Package.CountAsync(e => e.PlacedBy == businessId &&
+                                                                      e.Status == availForPickUpStatus);
+            var deliveredCount = await dbContext.Package.CountAsync(e => e.PlacedBy == businessId &&
+                                                                      e.Status == deliveredStatus);
+            var wareHouseCount = await dbContext.Package.CountAsync(e => e.PlacedBy == businessId &&
+                                                                      e.Status == wareHouseStatus);
+            var unDeliveredCount = await dbContext.Package.CountAsync(e => e.PlacedBy == businessId &&
+                                                                      e.Status == unDeliveredStatus);
+
+            return new BusinessAnalytics
+            {
+                PackageAtWareHouse = wareHouseCount,
+                PackageAvailableForPickUp = pickUpCount,
+                PackageDelivered= deliveredCount,
+                PackageUnDelivered = unDeliveredCount
+            };
         }
     }
 }

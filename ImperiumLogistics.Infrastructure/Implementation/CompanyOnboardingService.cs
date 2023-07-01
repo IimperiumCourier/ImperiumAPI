@@ -1,10 +1,15 @@
 ﻿using Azure.Core;
 using ImperiumLogistics.Domain.AuthAggregate;
 using ImperiumLogistics.Domain.CompanyAggregate;
+using ImperiumLogistics.Domain.PackageAggregate;
+using ImperiumLogistics.Domain.PackageAggregate.DTO;
 using ImperiumLogistics.Infrastructure.Abstract;
+using ImperiumLogistics.Infrastructure.Mapper;
 using ImperiumLogistics.Infrastructure.Models;
+using ImperiumLogistics.Infrastructure.CompanyHandlers;
 using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.APIWrapper;
+using ImperiumLogistics.SharedKernel.Query;
 using ImperiumLogistics.SharedKernel.Setting;
 using ImperiumLogistics.SharedKernel.ViewModel;
 using Microsoft.Extensions.Options;
@@ -23,17 +28,20 @@ namespace ImperiumLogistics.Infrastructure.Implementation
         private readonly EmailSetting _emailSetting;
         private readonly IAuthRepo _authRepo;
         private readonly ITokenGenerator _tokenGenerator;
+        private readonly IPackageRepository _packageRepository;
         public CompanyService(ICompanyRepository companyRepository,
                               IEmailService emailService,
                               IOptions<EmailSetting> emailSettingOption,
                               IAuthRepo authRepo,
-                              ITokenGenerator tokenGenerator)
+                              ITokenGenerator tokenGenerator,
+                              IPackageRepository packageRepository)
         {
             _companyRepo = companyRepository;
             _emailService = emailService;
             _emailSetting = emailSettingOption.Value;
             _authRepo = authRepo;
             _tokenGenerator = tokenGenerator;
+            _packageRepository = packageRepository;
         }
         public async Task<ServiceResponse<string>> CreateAccount(CompanyAccountCreationRequest request)
         {
@@ -108,6 +116,43 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 .GetResponse(tokenData, user.RefreshToken, company.Name, company.EmailAddress.Address, company.PhoneNumber, user.Role);
 
             return ServiceResponse<AuthenticationResponse>.Success(authRes,"Password set successfully.");
+        }
+
+        public async Task<ServiceResponse<BusinessAnalytics>> GetAnalytics(Guid companyId)
+        {
+            var analytics = await _packageRepository.GetBusinessAnalyticsAsync(companyId);
+
+            return ServiceResponse<BusinessAnalytics>.Success(analytics);
+        }
+
+        public ServiceResponse<PagedQueryResult<Company>> GetAllCompanies(QueryRequest queryRequest)
+        {
+            PagedQueryResult<Company> _result = new PagedQueryResult<Company>();
+            if (queryRequest != null)
+            {
+                IQueryable<Company> response = _companyRepo.GetAll();
+
+                var packageFilters = CompanyHandlerFactory.GetCompanyFilters();
+                packageFilters.Apply(ref response, queryRequest);
+
+                int pageSize = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+                int pageNumber = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+
+                var result = response.ToPagedResult(pageNumber, pageSize);
+
+                if (result.TotalItemCount <= 0)
+                {
+                    return ServiceResponse<PagedQueryResult<Company>>.Success(new PagedQueryResult<Company>
+                    { Items = new List<Company>() }, "There were no companies found.");
+                }
+
+                return ServiceResponse<PagedQueryResult<Company>>.Success(result);
+
+            }
+            else
+            {
+                return ServiceResponse<PagedQueryResult<Company>>.Error("Request is invalid");
+            }
         }
 
     }
