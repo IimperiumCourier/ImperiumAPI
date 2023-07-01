@@ -34,7 +34,7 @@ namespace ImperiumLogistics.Domain.AdminAggregate
         {
             return new Admin
             {
-                Credential = Credential.Add("admin@1234"),
+                Credential = Credential.Add(Utility.DefaultAdminPassword),
                 DateCreated = Utility.GetNigerianTime(),
                 Email = Email.Add(email),
                 FullName = name.ToSentenceCase(),

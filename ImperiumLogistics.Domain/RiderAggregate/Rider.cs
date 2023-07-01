@@ -40,7 +40,7 @@ namespace ImperiumLogistics.Domain.RiderAggregate
                 PhoneNumber = addRiderDto.PhoneNumber,
                 FullName= addRiderDto.FullName,
                 IsActive = true,
-                Credential = Credential.Add("rider@1234")
+                Credential = Credential.Add(Utility.DefaultRiderPassword)
             };
         }
 

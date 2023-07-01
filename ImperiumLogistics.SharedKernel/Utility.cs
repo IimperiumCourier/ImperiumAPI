@@ -8,6 +8,8 @@ namespace ImperiumLogistics.SharedKernel
 {
     public class Utility
     {
+        public static string DefaultRiderPassword = "Rider@1234";
+        public static string DefaultAdminPassword = "Admin@1234";
         public static int DefaultPageNumber = 1;
         public static int DefaultPageSize = 10;
         public static int MaxPageSize = 20;
@@ -15,6 +17,8 @@ namespace ImperiumLogistics.SharedKernel
         public static DateTime GetNigerianTime() => DateTime.UtcNow.AddHours(1);
 
         public const string WelcomeTemplatePath = @"Templates\WelcomeTemplate.html";
+        public const string RiderWelcomeTemplatePath = @"Templates\RiderWelcomeTemplate.html";
+        public const string AdminWelcomeTemplatePath = @"Templates\AdminWelcomeTemplate.html";
 
         public static string WelcomeTemplate(string customerName, string companyName, string serviceUrl)
         {
@@ -23,6 +27,28 @@ namespace ImperiumLogistics.SharedKernel
             emailBody = emailBody
                 .Replace("[Customer Name]", customerName.ToSentenceCase())
                   .Replace("[Your Service URL]", serviceUrl);
+
+            return emailBody;
+        }
+
+        public static string RiderWelcomeTemplate(string username, string password)
+        {
+            var path = new StreamReader(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), RiderWelcomeTemplatePath));
+            var emailBody = path.ReadToEnd();
+            emailBody = emailBody
+                .Replace("[username]", username)
+                  .Replace("[password]", password);
+
+            return emailBody;
+        }
+
+        public static string AdminWelcomeTemplate(string username, string password)
+        {
+            var path = new StreamReader(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), AdminWelcomeTemplatePath));
+            var emailBody = path.ReadToEnd();
+            emailBody = emailBody
+                .Replace("[username]", username)
+                  .Replace("[password]", password);
 
             return emailBody;
         }

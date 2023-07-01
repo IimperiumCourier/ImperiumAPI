@@ -62,7 +62,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 IsHtml= true,
                 Recepient = request.Email,
                 Subject = "Welcome Onboard."
-            }); ;
+            });
 
             return ServiceResponse<string>.Success("An email verification link has been sent to you, kindly check your inbox or spam to verify your email.");
         }
