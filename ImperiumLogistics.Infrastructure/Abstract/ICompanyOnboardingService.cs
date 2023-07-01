@@ -14,7 +14,5 @@ namespace ImperiumLogistics.Infrastructure.Abstract
     {
         Task<ServiceResponse<string>> CreateAccount(CompanyAccountCreationRequest request);
         Task<ServiceResponse<AuthenticationResponse>> CreatePassword(CompanyPasswordCreationRequest request);
-        Task<ServiceResponse<AuthenticationResponse>> Authenticate(string username, string password);
-        Task<ServiceResponse<RefreshTokenResponse>> RefreshToken(string accessToken, string refreshToken);
     }
 }

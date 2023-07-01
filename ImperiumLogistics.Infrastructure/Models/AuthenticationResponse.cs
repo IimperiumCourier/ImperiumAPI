@@ -10,20 +10,22 @@ namespace ImperiumLogistics.Infrastructure.Models
     {
         public string Token { get; set; } = string.Empty;
         public string ReIssueToken { get; set; } = string.Empty;
-        public string CompanyName { get; set; } = string.Empty;
-        public string CompanyEmail { get; set;} = string.Empty;
-        public string CompanyPhone { get; set;} = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set;} = string.Empty;
+        public string PhoneNumber { get; set;} = string.Empty;
+        public string Role { get; set; } = string.Empty;
 
         public static AuthenticationResponse GetResponse(string jwt, string reissueToken, string name,
-                                                         string email, string phoneNo)
+                                                         string email, string phoneNo,string role)
         {
             return new AuthenticationResponse
             {
                 Token = jwt,
                 ReIssueToken = reissueToken,
-                CompanyEmail = email,
-                CompanyPhone = phoneNo,
-                CompanyName = name
+                Email = email,
+                PhoneNumber = phoneNo,
+                Name = name,
+                Role = role
             };
         }
     }

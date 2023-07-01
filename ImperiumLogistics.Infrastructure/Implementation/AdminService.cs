@@ -27,26 +27,6 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             this.adminRepository = adminRepository;
         }
 
-        public async Task<ServiceResponse<string>> ChangePassword(string email, string password)
-        {
-            var admin = await adminRepository.GetByEmail(email);
-            if(admin is null)
-            {
-                return ServiceResponse<string>.Error("Email is not connected to a profile", "Email is not connected to a profile");
-            }
-
-            admin.UpdatePassword(password);
-            adminRepository.Update(admin);
-
-            var dbRes = await adminRepository.Save();
-            if(dbRes < 0)
-            {
-                return ServiceResponse<string>.Error("Password could not be changed.", "Password could not be changed.");
-            }
-
-            return ServiceResponse<string>.Success("Password is not connected to a profile", "Password is not connected to a profile");
-        }
-
         public async Task<ServiceResponse<string>> CreateAdmin(AdminCreationRequest request)
         {
             _ = await adminRepository.Add(request.PhoneNumber, request.FullName, request.Email);

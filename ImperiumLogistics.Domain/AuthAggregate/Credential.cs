@@ -7,11 +7,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImperiumLogistics.Domain.CompanyAggregate
+namespace ImperiumLogistics.Domain.AuthAggregate
 {
-    public class Credential: ValueObject<Credential>
+    public class Credential : ValueObject<Credential>
     {
-        public string PasswordHash { get; private set; }  = string.Empty;
+        public string PasswordHash { get; private set; } = string.Empty;
         public int LoginAttempt { get; private set; }
         public DateTime LastDateChanged { get; private set; }
 
@@ -26,7 +26,7 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
         {
             using SHA256 sha256Hash = SHA256.Create();
 
-            PasswordHash = GetHash(sha256Hash ,password);
+            PasswordHash = GetHash(sha256Hash, password);
             LastDateChanged = Utility.GetNigerianTime();
         }
 

@@ -1,4 +1,5 @@
 ﻿using ImperiumLogistics.Domain.AdminAggregate;
+using ImperiumLogistics.Domain.AuthAggregate;
 using ImperiumLogistics.Domain.CompanyAggregate;
 using ImperiumLogistics.Domain.PackageAggregate;
 using ImperiumLogistics.Domain.RiderAggregate;
@@ -25,6 +26,7 @@ namespace ImperiumLogistics.Infrastructure.Repository.Context
         public DbSet<PackageDescription> PackageDescription { get; set; }
         public DbSet<Admin> Admin { get; set; }
         public DbSet<Rider> Rider { get; set; }
+        public DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +35,7 @@ namespace ImperiumLogistics.Infrastructure.Repository.Context
             modelBuilder.ApplyConfiguration(new PackageDescriptionConfiguration());
             modelBuilder.ApplyConfiguration(new AdminConfiguration());
             modelBuilder.ApplyConfiguration(new RiderConfiguration());
+            modelBuilder.ApplyConfiguration(new AuthConfiguration());
         }
     }
 }

@@ -16,5 +16,17 @@ namespace ImperiumLogistics.Domain.RiderAggregate.Dto
     public class GetRiderDto : AddRiderDto { 
         public Guid Id { get; set; }
         public bool IsActive { get; set; }
+
+        public static GetRiderDto Create(Rider rider)
+        {
+            return new GetRiderDto
+            {
+                Email= rider.Email,
+                PhoneNumber= rider.PhoneNumber,
+                IsActive= rider.IsActive,
+                FullName= rider.FullName,
+                Id = rider.Id
+            };
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ImperiumLogistics.SharedKernel;
+﻿using ImperiumLogistics.Domain.AuthAggregate;
+using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.DDDSharedModel;
 using ImperiumLogistics.SharedKernel.Enums;
 using System;
@@ -19,9 +20,6 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
         public string State { get; private set; }
         public Email EmailAddress { get; private set; }
         public Owner Owner { get; private set; }
-        public Credential Credential { get; private set; }
-        public string RefreshToken { get; private set; }
-        public DateTime RefreshTokenExpiryTime { get; private set;}
 
         public Company(Guid Id):base(Id)
         {
@@ -46,52 +44,24 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
                 Owner = Owner.Add(fullName),
                 Name = companyName.ToSentenceCase()
             };
-        }
-
-        public void AddPassword(string password)
-        {
-            if(Credential is null)
-            {
-                EmailVerified();
-            }
-
-            Credential = Credential.Add(password);
-        }
-
-        public bool HasNotSetPassword()
-        {
-            return ReferenceEquals(null, Credential);
-        }
-
-        public void UpdatePassword(string password) 
-        {
-            Credential.ChangePassword(password);
-        }
+        }        
 
         public void EmailVerified()
         {
             EmailAddress.VerificationSucceded();
         }
 
-        public void AddRefreshToken(string refreshToken, DateTime duration)
+        public User CreateUser()
         {
-            RefreshToken = refreshToken;
-            RefreshTokenExpiryTime = duration;
-        }
-
-        public void UpdateRefreshToken(string refreshToken)
-        {
-            RefreshToken = refreshToken;
-        }
-
-        public bool HasNoRefreshToken()
-        {
-            return ReferenceEquals(null, RefreshToken);
-        }
-
-        public bool HasExpiredRefreshToken()
-        {
-            return RefreshTokenExpiryTime <= Utility.GetNigerianTime();
+            return User.Create(new AddUserDto
+            {
+                InformationId = Id,
+                Name = Name,
+                PhoneNumber = PhoneNumber,
+                Password = Utility.DefaultRiderPassword,
+                Role = UserRoles.Company,
+                UserName = EmailAddress.Address.RemoveSpace()
+            });
         }
     }
 }

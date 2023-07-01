@@ -65,27 +65,5 @@ namespace ImperiumLogistics.API.Controllers
 
             return Ok(response);
         }
-
-        [HttpPost]
-        [Route("password")]
-        [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<ActionResult> ChangePassword([FromBody] ChangeAdminPassword request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ServiceResponse<PagedQueryResult<AdminDto>>.Error("Request is invalid."));
-            }
-
-            var response = await adminService.ChangePassword(request.Email, request.Password);
-
-            if (!response.IsSuccessful)
-            {
-                return BadRequest(response);
-            }
-
-            return Ok(response);
-        }
     }
 }

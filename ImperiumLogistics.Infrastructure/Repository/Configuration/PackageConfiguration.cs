@@ -45,6 +45,20 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
                 a.Property(p => p.LandMark).IsRequired().HasMaxLength(500);
                 a.Property(p => p.Address).IsRequired().HasMaxLength(100);
             });
+
+            builder.OwnsOne(e => e.PickupRider, a =>
+            {
+                a.Property(p => p.RiderId).IsRequired().HasMaxLength(50);
+                a.Property(p => p.AssignedBy).IsRequired().HasMaxLength(50);
+                a.Property(p => p.DateAssigned).HasDefaultValue(DateTime.MinValue);
+            });
+
+            builder.OwnsOne(e => e.DeliveryRider, a =>
+            {
+                a.Property(p => p.RiderId).IsRequired().HasMaxLength(50);
+                a.Property(p => p.AssignedBy).IsRequired().HasMaxLength(50);
+                a.Property(p => p.DateAssigned).HasDefaultValue(DateTime.MinValue);
+            });
         }
     }
 }

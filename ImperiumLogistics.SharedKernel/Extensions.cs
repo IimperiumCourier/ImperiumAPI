@@ -43,5 +43,12 @@ namespace ImperiumLogistics.SharedKernel
             }
             return string.Empty;
         }
+
+        public static string RemoveSpace(this string data)
+        {
+            if (string.IsNullOrWhiteSpace(data)) { return string.Empty; }
+
+            return data.Trim().ToLower();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ImperiumLogistics.Domain.CompanyAggregate;
+﻿using ImperiumLogistics.Domain.AuthAggregate;
+using ImperiumLogistics.Domain.CompanyAggregate;
 using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.DDDSharedModel;
 using System;
@@ -14,9 +15,6 @@ namespace ImperiumLogistics.Domain.AdminAggregate
         public string FullName { get; private set; }
         public string PhoneNumber { get; private set; }
         public Email Email { get; private set; }
-        public Credential Credential { get; private set; }
-        public string RefreshToken { get; private set; }
-        public DateTime RefreshTokenExpiryTime { get; private set; }
         public bool IsActive { get; private set; }
         public bool IsSuperAdmin { get; private set; }
 
@@ -34,7 +32,6 @@ namespace ImperiumLogistics.Domain.AdminAggregate
         {
             return new Admin
             {
-                Credential = Credential.Add(Utility.DefaultAdminPassword),
                 DateCreated = Utility.GetNigerianTime(),
                 Email = Email.Add(email),
                 FullName = name.ToSentenceCase(),
@@ -43,35 +40,22 @@ namespace ImperiumLogistics.Domain.AdminAggregate
             };
         }
 
-        public void UpdatePassword(string password)
-        {
-            Credential.ChangePassword(password);
-        }
-
-        public void AddRefreshToken(string refreshToken, DateTime duration)
-        {
-            RefreshToken = refreshToken;
-            RefreshTokenExpiryTime = duration;
-        }
-
-        public void UpdateRefreshToken(string refreshToken)
-        {
-            RefreshToken = refreshToken;
-        }
-
-        public bool HasNoRefreshToken()
-        {
-            return ReferenceEquals(null, RefreshToken);
-        }
-
-        public bool HasExpiredRefreshToken()
-        {
-            return RefreshTokenExpiryTime <= Utility.GetNigerianTime();
-        }
-
         public void Delete()
         {
             IsActive = false;
+        }
+
+        public User CreateUser()
+        {
+            return User.Create(new AddUserDto
+            {
+                InformationId = Id,
+                Name = FullName,
+                PhoneNumber = PhoneNumber,
+                Password = Utility.DefaultAdminPassword,
+                Role = UserRoles.Admin,
+                UserName = Email.Address.RemoveSpace()
+            });
         }
     }
 }

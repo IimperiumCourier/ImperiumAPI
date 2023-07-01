@@ -1,8 +1,10 @@
 using ImperiumLogistics.API.Authorization;
 using ImperiumLogistics.API.Diagnostics;
 using ImperiumLogistics.Domain.AdminAggregate;
+using ImperiumLogistics.Domain.AuthAggregate;
 using ImperiumLogistics.Domain.CompanyAggregate;
 using ImperiumLogistics.Domain.PackageAggregate;
+using ImperiumLogistics.Domain.RiderAggregate;
 using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Implementation;
 using ImperiumLogistics.Infrastructure.Repository;
@@ -77,11 +79,16 @@ namespace ImperiumLogistics.API
             builder.Services.AddTransient<IPackageService, PackageService>();
             builder.Services.AddTransient<IPackageDescriptionService, PackageDescriptionService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
+            builder.Services.AddTransient<IAdminService, AdminService>();
+            builder.Services.AddTransient<IRiderService, RiderService>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
 
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
             builder.Services.AddScoped<IPackageRepository, PackageRepository>();
             builder.Services.AddScoped<IPackageDescriptionRepo, PackageDescriptionRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IRiderRepository, RiderRepository>();
+            builder.Services.AddScoped<IAuthRepo, AuthRepo>();
 
             var connectionString = builder.Configuration.GetConnectionString("ImperiumDbString");
             builder.Services.AddDbContext<ImperiumDbContext>(x => x.UseSqlServer(connectionString));

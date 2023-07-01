@@ -19,8 +19,6 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
             builder.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
             builder.Property(e => e.State).IsRequired().HasMaxLength(20);
             builder.Property(e => e.Name).IsRequired().HasMaxLength(100);
-            builder.Property(e => e.RefreshToken).IsRequired(false).HasMaxLength(500);
-            builder.Property(e => e.RefreshTokenExpiryTime).HasDefaultValue(DateTime.MinValue);
 
             builder.OwnsOne(e => e.Owner, a =>
             {
@@ -31,13 +29,6 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
             builder.OwnsOne(e => e.EmailAddress, a =>
             {
                 a.Property(p => p.Address).IsRequired().HasColumnName("Address").HasMaxLength(100);
-            });
-
-            builder.OwnsOne(e => e.Credential, a =>
-            {
-                a.Property(p => p.LoginAttempt).HasDefaultValue(0).HasColumnName("LoginAttempt");
-                a.Property(p => p.LastDateChanged).HasDefaultValue(DateTime.MinValue).HasColumnName("PwdLastDateChanged");
-                a.Property(p => p.PasswordHash).IsRequired(false).HasColumnName("Password");
             });
         }
     }
