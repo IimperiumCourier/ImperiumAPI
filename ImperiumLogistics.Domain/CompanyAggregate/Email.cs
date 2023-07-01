@@ -14,7 +14,7 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
 
         internal static Email Add(string emailAddress)
         {
-            return new Email { Address = emailAddress };
+            return new Email { Address = emailAddress.Trim().ToLower() };
         }
         
         public void VerificationSucceded()

@@ -24,6 +24,8 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         public decimal Weight { get; private set; }
         public string QRCode { get; private set; }
         public DateTime ExpectedDeliveryDate { get; private set; }
+        public AssignedRider PickupRider { get; private set; }
+        public AssignedRider DeliveryRider { get; private set; }
 
         public Package(Guid id): base(id)
         {
@@ -87,6 +89,16 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         public string GetQRCode()
         {
             return Utility.DecompressFromBase64(QRCode);
+        }
+
+        public void AssignPickupRider(Guid riderId, Guid assignedBy)
+        {
+            PickupRider = AssignedRider.GetRider(riderId, assignedBy);
+        }
+
+        public void AssignDeliveryRider(Guid riderId, Guid assignedBy)
+        {
+            DeliveryRider = AssignedRider.GetRider(riderId, assignedBy);
         }
     }
 }

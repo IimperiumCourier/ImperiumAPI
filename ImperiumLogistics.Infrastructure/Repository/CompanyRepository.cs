@@ -34,7 +34,8 @@ namespace ImperiumLogistics.Infrastructure.Repository
 
         public Task<Company?> GetByEmail(string email)
         {
-            return dbContext.Company.FirstOrDefaultAsync(e => e.EmailAddress.Address == email);
+            string _email = email.Trim().ToLower();
+            return dbContext.Company.FirstOrDefaultAsync(e => e.EmailAddress.Address == _email);
         }
 
         public Task<Company?> GetById(Guid id)
@@ -44,8 +45,9 @@ namespace ImperiumLogistics.Infrastructure.Repository
 
         public Task<bool> HasCompanyAccount(string searchCriteria)
         {
-            return dbContext.Company.AnyAsync(e => e.PhoneNumber == searchCriteria ||
-                                                   e.EmailAddress.Address == searchCriteria);
+            string _criteria = searchCriteria.Trim().ToLower();
+            return dbContext.Company.AnyAsync(e => e.PhoneNumber == _criteria ||
+                                                   e.EmailAddress.Address == _criteria);
         }
 
         public Task<int> Save()
