@@ -20,8 +20,6 @@ namespace ImperiumLogistics.Infrastructure.Repository
         public async Task<User> CreateAsync(User user)
         {
             await dbContext.User.AddAsync(user);
-           
-            _ = await dbContext.SaveChangesAsync();
 
             return user;
         }
@@ -39,8 +37,6 @@ namespace ImperiumLogistics.Infrastructure.Repository
         public async Task<User> UpdateAsync(User user)
         {
             dbContext.User.Update(user);
-
-            _ = await dbContext.SaveChangesAsync();
 
             return user;
         }
