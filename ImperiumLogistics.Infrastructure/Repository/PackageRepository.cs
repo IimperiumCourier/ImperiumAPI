@@ -44,6 +44,11 @@ namespace ImperiumLogistics.Infrastructure.Repository
             return dbContext.Package.FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public IQueryable<Package> GetListByIds(List<Guid> id)
+        {
+            return dbContext.Package.Where(e => id.Contains(e.Id));
+        }
+
         public Task<Package?> GetByTrackNumber(string number)
         {
             return dbContext.Package.FirstOrDefaultAsync(e => e.TrackingNumber == number);
@@ -57,6 +62,11 @@ namespace ImperiumLogistics.Infrastructure.Repository
         public void Update(Package package)
         {
             dbContext.Package.Update(package);
+        }
+
+        public void UpdateList(List<Package> packages)
+        {
+            dbContext.Package.UpdateRange(packages);
         }
 
         public IQueryable<Package> GetAllByRiderId(Guid riderId, PackageStatus packageStatus)

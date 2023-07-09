@@ -21,5 +21,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         Task<int> Save();
         IQueryable<Package> GetAllByRiderId(Guid riderId, PackageStatus packageStatus);
         Task<BusinessAnalytics> GetBusinessAnalyticsAsync(Guid businessId);
+        IQueryable<Package> GetListByIds(List<Guid> id);
+        void UpdateList(List<Package> packages);
     }
 }

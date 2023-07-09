@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImperiumLogistics.Infrastructure.RiderHandlers;
+using ImperiumLogistics.Domain.AuthAggregate;
 
 namespace ImperiumLogistics.Infrastructure.Implementation
 {
@@ -24,10 +25,12 @@ namespace ImperiumLogistics.Infrastructure.Implementation
     {
         private readonly IRiderRepository riderRepository;
         private readonly IEmailService emailService;
-        public RiderService(IRiderRepository riderRepository, IEmailService emailService)
+        private readonly IAuthRepo authRepo;
+        public RiderService(IRiderRepository riderRepository, IEmailService emailService, IAuthRepo _authRepo)
         {
             this.riderRepository = riderRepository;
             this.emailService = emailService;
+            this.authRepo = _authRepo;
         }
 
         public async Task<ServiceResponse<string>> AddRider(AddRiderDto rider)
@@ -43,6 +46,8 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             }
 
             var _rider = await riderRepository.AddRider(rider);
+
+            _ = await authRepo.CreateAsync(_rider.CreateUser());
 
             var dbResponse = await riderRepository.Save();
 

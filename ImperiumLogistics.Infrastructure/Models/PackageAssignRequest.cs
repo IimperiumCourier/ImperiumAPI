@@ -10,7 +10,7 @@ namespace ImperiumLogistics.Infrastructure.Models
     public class PackageAssignRequest
     {
         public Guid RiderId { get; set; }
-        public Guid PackageId { get; set; }
+        public List<Guid> PackageIds { get; set; }
         public AssignType Type { get; set; }
     }
 }

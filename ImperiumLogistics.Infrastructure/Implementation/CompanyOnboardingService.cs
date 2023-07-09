@@ -61,6 +61,10 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                                            request.State, request.ContactFullName, request.CompanyName,
                                            request.Email);
 
+            var loginInfo = company.CreateUser();
+
+            await _authRepo.CreateAsync(loginInfo);
+
             var dbResponse = await _companyRepo.Save();
 
             if(dbResponse < 1)

@@ -15,22 +15,26 @@ using System.Text;
 using System.Threading.Tasks;
 using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.ViewModel;
+using ImperiumLogistics.Domain.AuthAggregate;
 
 namespace ImperiumLogistics.Infrastructure.Implementation
 {
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository adminRepository;
+        private readonly IAuthRepo authRepository;
 
-        public AdminService(IAdminRepository adminRepository)
+        public AdminService(IAdminRepository adminRepository, IAuthRepo authRepo)
         {
             this.adminRepository = adminRepository;
+            this.authRepository = authRepo;
         }
 
         public async Task<ServiceResponse<string>> CreateAdmin(AdminCreationRequest request)
         {
-            _ = await adminRepository.Add(request.PhoneNumber, request.FullName, request.Email);
-            
+            var admin = await adminRepository.Add(request.PhoneNumber, request.FullName, request.Email);
+
+            _ = authRepository.CreateAsync(admin.CreateUser());
             var dbRes = await adminRepository.Save();
             if (dbRes < 0)
             {

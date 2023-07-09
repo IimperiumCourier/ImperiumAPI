@@ -8,6 +8,7 @@ using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Enums;
 using ImperiumLogistics.SharedKernel.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace ImperiumLogistics.Infrastructure.Implementation
 {
@@ -150,22 +151,32 @@ namespace ImperiumLogistics.Infrastructure.Implementation
     
         public async Task<ServiceResponse<string>> AssignRiderToPackage(PackageAssignRequest packageAssignRequest, Guid adminId)
         {
-            var package = await _packageRepository.GetById(packageAssignRequest.PackageId);
-            if(package == null)
+            var packages = await _packageRepository.GetListByIds(packageAssignRequest.PackageIds).ToListAsync();
+
+            if (!packages.Any())
             {
-                return ServiceResponse<string>.Error("Id is not connected to a package.");
+                return  ServiceResponse<string>.Error("Packages were not found.");
             }
 
-            if (packageAssignRequest.Type.Equals(AssignType.Delivery))
+            foreach(var package in packages)
             {
-                package.AssignDeliveryRider(packageAssignRequest.RiderId, adminId);
-            }
-            else
-            {
-                package.AssignPickupRider(packageAssignRequest.RiderId, adminId);
-            } 
+                if (package == null)
+                {
+                    return ServiceResponse<string>.Error("Id is not connected to a package.");
+                }
 
-            _packageRepository.Update(package);
+                if (packageAssignRequest.Type.Equals(AssignType.Delivery))
+                {
+                    package.AssignDeliveryRider(packageAssignRequest.RiderId, adminId);
+                }
+                else
+                {
+                    package.AssignPickupRider(packageAssignRequest.RiderId, adminId);
+                }
+
+            }
+
+            _packageRepository.UpdateList(packages);
 
             var dbResponse = await _packageRepository.Save();
             if (dbResponse < 1)
@@ -222,5 +233,47 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid");
             }
         }
+
+        public ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackagesInSystem(PackageQueryRequestDTO queryRequest)
+        {
+            PagedQueryResult<PackageQueryResponse> _result = new PagedQueryResult<PackageQueryResponse>();
+            if (queryRequest != null)
+            {
+
+                IQueryable<Package> response = _packageRepository.GetAll();
+
+                var packageFilters = HandlerFactory.GetPackageFilters();
+                packageFilters.Apply(ref response, queryRequest);
+
+                int pageSize = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+                int pageNumber = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+
+                var result = response.ToPagedResult(pageNumber, pageSize);
+
+                if (result.TotalItemCount <= 0)
+                {
+                    return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(new PagedQueryResult<PackageQueryResponse>
+                    { Items = new List<PackageQueryResponse>() }, "There were no packages found.");
+                }
+
+                var _data = result.Items.Select(e => PackageResponseMapper.GetPackageQueryResponseV2(e)).ToList();
+
+                _result.Items = _data;
+                _result.TotalItemCount = result.TotalItemCount;
+                _result.CurrentPageNumber = result.CurrentPageNumber;
+                _result.CurrentPageSize = result.CurrentPageSize;
+                _result.TotalPageCount = result.TotalPageCount;
+                _result.HasPrevious = result.HasPrevious;
+                _result.HasNext = result.HasNext;
+
+                return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Success(_result);
+
+            }
+            else
+            {
+                return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid");
+            }
+        }
+
     }
 }

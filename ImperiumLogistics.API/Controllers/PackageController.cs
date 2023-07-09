@@ -133,6 +133,34 @@ namespace ImperiumLogistics.API.Controllers
             return Ok(res);
         }
 
+        [HttpPost]
+        [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult GetAllPackage([FromBody] PackageQueryRequest queryRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
+            }
+
+            var data = new PackageQueryRequestDTO
+            {
+                ComanyID = Guid.Empty,
+                DateFilter = queryRequest.DateFilter,
+                PagedQuery = queryRequest.PagedQuery,
+                TextFilter = queryRequest.TextFilter
+            };
+
+            var res = _packageService.GetAllPackages(data);
+
+            if (!res.IsSuccessful)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
+
         [HttpGet]
         [Route("description")]
         [ProducesResponseType(typeof(ServiceResponse<List<PackageDescQueryRes>>), StatusCodes.Status200OK)]
@@ -230,27 +258,14 @@ namespace ImperiumLogistics.API.Controllers
         [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Authorize("Admin,Rider,GodMode")]
-        public ActionResult GetPackagesAssignedToRider([FromBody] PackageQueryRequest queryRequest)
+        public ActionResult GetPackagesAssignedToRider([FromBody] RiderPackageQueryRequest queryRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
             }
 
-            var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
-            if (companyID == null)
-            {
-                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
-            }
-            var data = new PackageQueryRequestDTO
-            {
-                ComanyID = Guid.Parse(companyID.Value),
-                DateFilter = queryRequest.DateFilter,
-                PagedQuery = queryRequest.PagedQuery,
-                TextFilter = queryRequest.TextFilter
-            };
-
-            var res = _packageService.GetAllPackages(data);
+            var res = _packageService.GetAllPackageAssignedToRider(queryRequest);
 
             if (!res.IsSuccessful)
             {
