@@ -101,6 +101,7 @@ namespace ImperiumLogistics.API.Controllers
         }
 
         [HttpPost]
+        [Route("customerlist")]
         [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         public ActionResult GetPackages([FromBody] PackageQueryRequest queryRequest)
@@ -266,6 +267,35 @@ namespace ImperiumLogistics.API.Controllers
             }
 
             var res = _packageService.GetAllPackageAssignedToRider(queryRequest);
+
+            if (!res.IsSuccessful)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Route("adminlist")]
+        [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Authorize("Admin,GodMode")]
+        public ActionResult GetPackagesForAdminDashboard([FromBody] PackageQueryRequest queryRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
+            }
+
+            var request = new PackageQueryRequestDTO
+            {
+                DateFilter = queryRequest.DateFilter,
+                PagedQuery = queryRequest.PagedQuery,
+                TextFilter = queryRequest.TextFilter
+            };
+
+            var res = _packageService.GetAllPackagesInSystem(request);
 
             if (!res.IsSuccessful)
             {
