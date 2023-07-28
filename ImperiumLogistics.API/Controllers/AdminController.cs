@@ -13,7 +13,7 @@ namespace ImperiumLogistics.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "GodMode, Admin")]
+    [Authorize]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService adminService;

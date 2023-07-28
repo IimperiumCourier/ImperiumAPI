@@ -1,6 +1,7 @@
 ﻿using ImperiumLogistics.Domain.PackageAggregate.DTO;
 using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Models;
+using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Enums;
 using ImperiumLogistics.SharedKernel.Query;
@@ -17,7 +18,7 @@ namespace ImperiumLogistics.API.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Company, GodMode, Admin")]
+    [Authorize]
     public class PackageController : ControllerBase
     {
         private readonly IPackageService _packageService;
@@ -39,6 +40,11 @@ namespace ImperiumLogistics.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is invalid."));
+            }
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if(roleClaim == null || roleClaim.Value != UserRoles.Company)
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
             }
 
             var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
@@ -109,6 +115,11 @@ namespace ImperiumLogistics.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
+            }
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || roleClaim.Value != UserRoles.Company)
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
             }
 
             var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
@@ -187,12 +198,18 @@ namespace ImperiumLogistics.API.Controllers
         [Route("update")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "Rider,Admin,GodMode")]
         public async Task<ActionResult> UpdatePackageStatus([FromBody] UpdatePackageUsingTrackingNum model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+            }
+
+            List<string> acceptedRoles = new List<string> { UserRoles.Rider, UserRoles.Admin};
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
             }
 
             var res = await _packageService.UpdatePackageStatus(model.TrackingNumber, model.Status);
@@ -209,12 +226,17 @@ namespace ImperiumLogistics.API.Controllers
         [Route("description")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "Admin,GodMode")]
         public async Task<ActionResult> AddPackageDescription([FromBody] CreateDescriptionModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+            }
+            List<string> acceptedRoles = new List<string> { UserRoles.Admin };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
             }
 
             var res = await _packageDescriptionService.AddPackageDescription(model.Description);
@@ -231,13 +253,19 @@ namespace ImperiumLogistics.API.Controllers
         [Route("assign")]
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "Admin,GodMode")]
         public async Task<ActionResult> AssignPackageToRider([FromBody] PackageAssignRequest model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
             }
+            List<string> acceptedRoles = new List<string> { UserRoles.Admin };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+            }
+
             var adminId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
             if (adminId == null)
             {
@@ -258,12 +286,18 @@ namespace ImperiumLogistics.API.Controllers
         [Route("riderlist")]
         [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        [Authorize("Admin,Rider,GodMode")]
         public ActionResult GetPackagesAssignedToRider([FromBody] RiderPackageQueryRequest queryRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
+            }
+
+            List<string> acceptedRoles = new List<string> { UserRoles.Rider, UserRoles.Admin };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
             }
 
             var res = _packageService.GetAllPackageAssignedToRider(queryRequest);
@@ -280,14 +314,19 @@ namespace ImperiumLogistics.API.Controllers
         [Route("adminlist")]
         [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        //[Authorize("Admin,GodMode")]
-        [AllowAnonymous]
         public ActionResult GetPackagesForAdminDashboard([FromBody] PackageQueryRequest queryRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
             }
+            List<string> acceptedRoles = new List<string> { UserRoles.Admin };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+            }
+
 
             var request = new PackageQueryRequestDTO
             {

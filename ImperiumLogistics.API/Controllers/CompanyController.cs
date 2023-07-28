@@ -11,13 +11,16 @@ using Microsoft.AspNetCore.Authorization;
 using ImperiumLogistics.Domain.PackageAggregate.DTO;
 using ImperiumLogistics.Domain.CompanyAggregate;
 using ImperiumLogistics.SharedKernel.Query;
+using ImperiumLogistics.SharedKernel;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ImperiumLogistics.API.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "GodMode, Company, Admin")]
+    [Authorize]
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _onboardingService;
@@ -102,6 +105,13 @@ namespace ImperiumLogistics.API.Controllers
                 return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
             }
 
+            List<string> acceptedRoles = new List<string> { UserRoles.Admin };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+            }
+
             var response = _onboardingService.GetAllCompanies(queryRequest);
             if (!response.IsSuccessful)
             {
@@ -122,6 +132,21 @@ namespace ImperiumLogistics.API.Controllers
             {
                 return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
             }
+
+            List<string> acceptedRoles = new List<string> { UserRoles.Company };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+            }
+
+            var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
+            if (companyID == null)
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+            }
+
+            model.Id = Guid.Parse(companyID.Value);
 
             var res = await _onboardingService.UpdateAccount(model);
 

@@ -70,6 +70,8 @@ namespace ImperiumLogistics.API
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtSettings:SecretKey").Value))
             });
 
+            builder.Services.AddAuthorization(x => x.AddPolicy("ElevatedRights",
+                policy => policy.RequireRole("Admin", "GodMode", "Company", "Rider")));
 
             builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
             builder.Services.AddHttpClient<ICompanyService, CompanyService>();
