@@ -14,5 +14,6 @@ namespace ImperiumLogistics.Infrastructure.Abstract
         Task<ServiceResponse<GetRiderDto>> GetRider(Guid id);
         Task<ServiceResponse<string>> AddRider(AddRiderDto rider);
         ServiceResponse<PagedQueryResult<GetRiderDto>> GetAllRiders(QueryRequest request);
+        Task<ServiceResponse<string>> UpdateRider(UpdateRiderDto rider);
     }
 }

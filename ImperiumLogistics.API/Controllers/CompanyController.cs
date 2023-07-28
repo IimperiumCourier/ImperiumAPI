@@ -17,7 +17,7 @@ namespace ImperiumLogistics.API.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "GodMode,Company,Admin")]
+    [Authorize(Roles = "GodMode, Company, Admin")]
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _onboardingService;
@@ -109,6 +109,28 @@ namespace ImperiumLogistics.API.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("update")]
+        [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<ActionResult> UpdateAccount([FromBody] CompanyAccountUpdateRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+            }
+
+            var res = await _onboardingService.UpdateAccount(model);
+
+            if (!res.IsSuccessful)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
         }
     }
 }

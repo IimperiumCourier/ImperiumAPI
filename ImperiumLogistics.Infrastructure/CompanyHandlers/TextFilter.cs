@@ -18,7 +18,7 @@ namespace ImperiumLogistics.Infrastructure.CompanyHandlers
             {
                 string keyword = textFilter.Keyword.ToSentenceCase();
 
-                var _data = data.Where(t => t.EmailAddress.Address == keyword || t.Name == keyword || t.PhoneNumber == keyword);
+                var _data = data.Where(t => t.EmailAddress.Address.Contains(textFilter.Keyword) || t.Name.Contains(keyword) || t.PhoneNumber.Contains(keyword));
 
                 data = _data;
             }

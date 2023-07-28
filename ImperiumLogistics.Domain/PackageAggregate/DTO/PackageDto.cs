@@ -25,5 +25,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate.DTO
         public string PickUpCity { get; set; } = string.Empty;
         public string PickUpState { get; set; } = string.Empty;
         public string PickUpLandMark { get; set; } = string.Empty;
+        public Guid DeliveryRider { get; set; } = Guid.Empty;
+        public Guid PickUpRider { get; set; } = Guid.Empty;
     }
 }

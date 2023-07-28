@@ -28,6 +28,7 @@ namespace ImperiumLogistics.API.Controllers
         [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
+        [AllowAnonymous]
         public async Task<ActionResult> CreateAccount([FromBody] AdminCreationRequest model)
         {
             if (!ModelState.IsValid)

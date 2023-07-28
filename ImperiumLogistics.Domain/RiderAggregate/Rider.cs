@@ -16,6 +16,9 @@ namespace ImperiumLogistics.Domain.RiderAggregate
         public string PhoneNumber { get; private set; }
         public string Email { get; private set; }
         public bool IsActive { get; private set; }
+        public string FrequentLocation { get; private set; }
+        public string BikeRegistrationNumber { get; private set; }
+        public string LicenseNumber { get; private set; }
 
         public Rider(Guid id) : base(id)
         {
@@ -34,8 +37,11 @@ namespace ImperiumLogistics.Domain.RiderAggregate
                 DateCreated = Utility.GetNigerianTime(),
                 Email = addRiderDto.Email.Trim().ToLower(),
                 PhoneNumber = addRiderDto.PhoneNumber,
-                FullName= addRiderDto.FullName,
-                IsActive = true
+                FullName= addRiderDto.FullName.ToSentenceCase(),
+                IsActive = true,
+                FrequentLocation = addRiderDto.FrequentLocation.ToSentenceCase(),
+                LicenseNumber= addRiderDto.LicenseNumber.ToUpper(),
+                BikeRegistrationNumber = addRiderDto.BikeRegistrationNumber.ToUpper()
             };
         }
 
@@ -60,6 +66,35 @@ namespace ImperiumLogistics.Domain.RiderAggregate
                 Role = UserRoles.Rider,
                 UserName = Email.RemoveSpace()
             });
+        }
+
+        public void Update(UpdateRiderDto data)
+        {
+            if (!string.IsNullOrWhiteSpace(data.PhoneNumber))
+            {
+                PhoneNumber = data.PhoneNumber;
+            }
+
+            if (!string.IsNullOrWhiteSpace(data.FullName))
+            {
+                FullName = data.FullName.ToSentenceCase();
+            }
+
+            if (!string.IsNullOrWhiteSpace(data.FrequentLocation))
+            {
+                FrequentLocation = data.FrequentLocation.ToSentenceCase();
+            }
+            
+            if(!string.IsNullOrWhiteSpace(data.LicenseNumber)) 
+            {
+                LicenseNumber = data.LicenseNumber.ToUpper(); 
+            }
+
+            if (!string.IsNullOrWhiteSpace(data.BikeRegistrationNumber))
+            {
+                BikeRegistrationNumber = data.BikeRegistrationNumber.ToUpper();
+            }
+           
         }
     }
 }

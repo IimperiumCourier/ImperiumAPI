@@ -21,7 +21,7 @@ namespace ImperiumLogistics.Infrastructure.Handlers
                 string _desc = textFilter.Keyword.ToSentenceCase();
                 string _keyword = queryRequest?.TextFilter?.Keyword ?? string.Empty;
 
-                var _data = data.Where(t => t.TrackingNumber == _keyword || t.Description == _desc);
+                var _data = data.Where(t => t.TrackingNumber == _keyword || t.Description.Contains(_desc));
 
                 data = _data;
             }

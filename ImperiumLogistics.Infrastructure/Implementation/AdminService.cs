@@ -32,6 +32,11 @@ namespace ImperiumLogistics.Infrastructure.Implementation
 
         public async Task<ServiceResponse<string>> CreateAdmin(AdminCreationRequest request)
         {
+            if(await adminRepository.GetByEmail(request.Email) != null)
+            {
+                return ServiceResponse<string>.Error("Hi, email address provided is connected to a profile.");
+            }
+
             var admin = await adminRepository.Add(request.PhoneNumber, request.FullName, request.Email);
 
             _ = authRepository.CreateAsync(admin.CreateUser());
@@ -41,7 +46,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return ServiceResponse<string>.Error("Oops an error occured. Admin's record could not be created", "Oops an error occured. Admin's record could not be created");
             }
 
-            return ServiceResponse<string>.Success("Oops an error occured. Admin's record could not be created", "Oops an error occured. Admin's record could not be created");
+            return ServiceResponse<string>.Success("Admin was created successfully.", "Admin was created successfully.");
         }
 
         public async Task<ServiceResponse<string>> DeleteAdmin(string email, string requestedBy)

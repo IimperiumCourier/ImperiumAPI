@@ -41,7 +41,7 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
                 Address = houseAddress.ToSentenceCase(),
                 EmailAddress = Email.Add(emailAddress),
                 PhoneNumber = phoneNo,
-                Owner = Owner.Add(fullName),
+                Owner = Owner.Add(fullName.ToSentenceCase()),
                 Name = companyName.ToSentenceCase()
             };
         }        
@@ -62,6 +62,35 @@ namespace ImperiumLogistics.Domain.CompanyAggregate
                 Role = UserRoles.Company,
                 UserName = EmailAddress.Address.RemoveSpace()
             });
+        }
+
+        public void Update(string phoneNo, string houseAddress, string city,
+                                     string state, string fullName)
+        {
+            if (!string.IsNullOrWhiteSpace(city))
+            {
+                City = city.ToSentenceCase();
+            }
+
+            if (!string.IsNullOrWhiteSpace(state))
+            {
+                State = state.ToSentenceCase();
+            }
+
+            if (!string.IsNullOrWhiteSpace(houseAddress))
+            {
+                Address = houseAddress.ToSentenceCase();
+            }
+
+            if (!string.IsNullOrWhiteSpace(phoneNo))
+            {
+                PhoneNumber = phoneNo;
+            }
+
+            if (!string.IsNullOrWhiteSpace(fullName))
+            {
+                Owner = Owner.Add(fullName);
+            }
         }
     }
 }

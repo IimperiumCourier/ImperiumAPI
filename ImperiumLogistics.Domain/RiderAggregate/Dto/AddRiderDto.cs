@@ -11,6 +11,9 @@ namespace ImperiumLogistics.Domain.RiderAggregate.Dto
         public string FullName { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
+        public string FrequentLocation { get; set; }
+        public string BikeRegistrationNumber { get; set; }
+        public string LicenseNumber { get; set; }
     }
 
     public class GetRiderDto : AddRiderDto { 
@@ -25,7 +28,10 @@ namespace ImperiumLogistics.Domain.RiderAggregate.Dto
                 PhoneNumber= rider.PhoneNumber,
                 IsActive= rider.IsActive,
                 FullName= rider.FullName,
-                Id = rider.Id
+                Id = rider.Id,
+                BikeRegistrationNumber = rider.BikeRegistrationNumber,
+                LicenseNumber = rider.LicenseNumber,
+                FrequentLocation = rider.FrequentLocation
             };
         }
     }

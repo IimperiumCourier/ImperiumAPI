@@ -280,7 +280,8 @@ namespace ImperiumLogistics.API.Controllers
         [Route("adminlist")]
         [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        [Authorize("Admin,GodMode")]
+        //[Authorize("Admin,GodMode")]
+        [AllowAnonymous]
         public ActionResult GetPackagesForAdminDashboard([FromBody] PackageQueryRequest queryRequest)
         {
             if (!ModelState.IsValid)

@@ -19,7 +19,10 @@ namespace ImperiumLogistics.Infrastructure.RiderHandlers
             {
                 string keyword = textFilter.Keyword.ToSentenceCase();
 
-                var _data = data.Where(t => t.Email == keyword || t.FullName == keyword || t.PhoneNumber == keyword);
+                var _data = data.Where(t => t.Email.Contains(textFilter.Keyword) 
+                                         || t.FullName.Contains(keyword) 
+                                         || t.PhoneNumber.Contains(keyword)
+                                         || t.FrequentLocation.Contains(keyword));
 
                 data = _data;
             }

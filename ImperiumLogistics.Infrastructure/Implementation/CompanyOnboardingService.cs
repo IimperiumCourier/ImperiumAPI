@@ -84,6 +84,27 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             return ServiceResponse<string>.Success("An email verification link has been sent to you, kindly check your inbox or spam to verify your email.");
         }
 
+        public async Task<ServiceResponse<string>> UpdateAccount(CompanyAccountUpdateRequest request)
+        {
+            string phoneNumber = request.PhoneNumber.ConvertToElevenDigits();
+
+            var company = await _companyRepo.GetById(request.Id);
+
+            company.Update(phoneNumber, request.Address, request.City,
+                           request.State, request.ContactFullName);
+
+            _companyRepo.Update(company);
+
+            var dbResponse = await _companyRepo.Save();
+
+            if (dbResponse < 1)
+            {
+                return ServiceResponse<string>.Error("An error occurred while updating record.");
+            }
+
+            return ServiceResponse<string>.Success("Record was updated successfully.");
+        }
+
         public async Task<ServiceResponse<AuthenticationResponse>> CreatePassword(CompanyPasswordCreationRequest request)
         {
             var company = await _companyRepo.GetById(request.CompanyId);
