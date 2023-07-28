@@ -145,34 +145,6 @@ namespace ImperiumLogistics.API.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
-        [ProducesResponseType(typeof(ServiceResponse<PagedQueryResult<PackageQueryResponse>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult GetAllPackage([FromBody] PackageQueryRequest queryRequest)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid."));
-            }
-
-            var data = new PackageQueryRequestDTO
-            {
-                ComanyID = Guid.Empty,
-                DateFilter = queryRequest.DateFilter,
-                PagedQuery = queryRequest.PagedQuery,
-                TextFilter = queryRequest.TextFilter
-            };
-
-            var res = _packageService.GetAllPackages(data);
-
-            if (!res.IsSuccessful)
-            {
-                return BadRequest(res);
-            }
-
-            return Ok(res);
-        }
-
         [HttpGet]
         [Route("description")]
         [ProducesResponseType(typeof(ServiceResponse<List<PackageDescQueryRes>>), StatusCodes.Status200OK)]
