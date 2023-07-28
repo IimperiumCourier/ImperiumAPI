@@ -17,7 +17,7 @@ namespace ImperiumLogistics.API.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Company,GodMode,Admin")]
+    [Authorize(Roles = "Company, GodMode, Admin")]
     public class PackageController : ControllerBase
     {
         private readonly IPackageService _packageService;

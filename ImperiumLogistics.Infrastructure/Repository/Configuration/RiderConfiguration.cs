@@ -16,6 +16,9 @@ namespace ImperiumLogistics.Infrastructure.Repository.Configuration
         {
             builder.Property(e => e.PhoneNumber).HasMaxLength(20);
             builder.Property(e => e.FullName).IsRequired().HasMaxLength(100);
+            builder.Property(e => e.LicenseNumber).IsRequired().HasMaxLength(100);
+            builder.Property(e => e.FrequentLocation).IsRequired().HasMaxLength(200);
+            builder.Property(e => e.BikeRegistrationNumber).IsRequired().HasMaxLength(100);
             builder.Property(p => p.Email).IsRequired().HasColumnName("EmailAddress").HasMaxLength(100);
         }
     }
