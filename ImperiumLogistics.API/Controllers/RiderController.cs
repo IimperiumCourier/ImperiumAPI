@@ -59,26 +59,15 @@ namespace ImperiumLogistics.API.Controllers
         }
 
         [HttpGet]
+        [Route("id/{id}")]
         [ProducesResponseType(typeof(ServiceResponse<GetRiderDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<ActionResult> GetRider()
+        [AllowAnonymous]
+        public async Task<ActionResult> GetRider(Guid id)
         {
-            List<string> acceptedRoles = new List<string> { UserRoles.Rider, UserRoles.Admin };
-            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
-            {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
-            }
 
-            var riderID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
-
-            if(riderID == null)
-            {
-                return BadRequest(new ServiceResponse<GetRiderDto> { IsSuccessful = false, Message = "Request is invalid." });
-            }
-
-            ServiceResponse<GetRiderDto> res = await riderService.GetRider(Guid.Parse(riderID.Value));
+            ServiceResponse<GetRiderDto> res = await riderService.GetRider(id);
 
             if (!res.IsSuccessful)
             {
