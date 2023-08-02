@@ -9,6 +9,7 @@ using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Enums;
 using ImperiumLogistics.SharedKernel.Query;
 using Microsoft.EntityFrameworkCore;
+using QRCoder.Extensions;
 
 namespace ImperiumLogistics.Infrastructure.Implementation
 {
@@ -165,13 +166,13 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                     return ServiceResponse<string>.Error("Id is not connected to a package.");
                 }
 
-                if (packageAssignRequest.Type.Equals(AssignType.Delivery))
+                if (package.Status.Equals(PackageStatus.AvailableForPickUp.GetString()))
                 {
-                    package.AssignDeliveryRider(packageAssignRequest.RiderId, adminId);
+                    package.AssignPickupRider(packageAssignRequest.RiderId, adminId);
                 }
                 else
                 {
-                    package.AssignPickupRider(packageAssignRequest.RiderId, adminId);
+                    package.AssignDeliveryRider(packageAssignRequest.RiderId, adminId);
                 }
 
             }
