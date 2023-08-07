@@ -14,9 +14,11 @@ namespace ImperiumLogistics.Infrastructure.Models
         public string Email { get; set;} = string.Empty;
         public string PhoneNumber { get; set;} = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public Guid Id { get; set; }
 
         public static AuthenticationResponse GetResponse(string jwt, string reissueToken, string name,
-                                                         string email, string phoneNo,string role)
+                                                         string email, string phoneNo,string role,
+                                                         Guid id)
         {
             return new AuthenticationResponse
             {
@@ -25,7 +27,8 @@ namespace ImperiumLogistics.Infrastructure.Models
                 Email = email,
                 PhoneNumber = phoneNo,
                 Name = name,
-                Role = role
+                Role = role,
+                Id = id
             };
         }
     }

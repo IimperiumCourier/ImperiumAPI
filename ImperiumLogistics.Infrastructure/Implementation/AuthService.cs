@@ -40,7 +40,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             var tokenData = _tokenGenerator.GenerateToken(user.UserName, user.InformationId, user.Role);
 
             return ServiceResponse<AuthenticationResponse>.Success(AuthenticationResponse
-            .GetResponse(tokenData, user.RefreshToken, user.Name, user.UserName, user.PhoneNumber, user.Role));
+            .GetResponse(tokenData, user.RefreshToken, user.Name,
+                         user.UserName, user.PhoneNumber, user.Role,
+                         user.InformationId));
 
         }
 
