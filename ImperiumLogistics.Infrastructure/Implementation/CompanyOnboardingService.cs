@@ -138,7 +138,8 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             var tokenData = _tokenGenerator.GenerateToken(company.EmailAddress.Address, company.Id, user.Role);
 
             var authRes = AuthenticationResponse
-                .GetResponse(tokenData, user.RefreshToken, company.Name, company.EmailAddress.Address, company.PhoneNumber, user.Role);
+                .GetResponse(tokenData, user.RefreshToken, company.Name, company.EmailAddress.Address, company.PhoneNumber, user.Role,
+                company.Id);
 
             return ServiceResponse<AuthenticationResponse>.Success(authRes,"Password set successfully.");
         }
