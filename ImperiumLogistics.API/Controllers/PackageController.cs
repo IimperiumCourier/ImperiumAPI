@@ -119,7 +119,7 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || roleClaim.Value != UserRoles.Company)
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
             }
 
             var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
@@ -181,7 +181,7 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<string>.Error("Request is not authorized."));
             }
 
             var res = await _packageService.UpdatePackageStatus(model.TrackingNumber, model.Status);
@@ -208,7 +208,7 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<string>.Error("Request is not authorized."));
             }
 
             var res = await _packageDescriptionService.AddPackageDescription(model.Description);
@@ -235,13 +235,13 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<string>.Error("Request is not authorized."));
             }
 
             var adminId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
             if (adminId == null)
             {
-                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<string>.Error("Request is not authorized."));
             }
 
             var res = await _packageService.AssignRiderToPackage(model, Guid.Parse(adminId.Value));
@@ -269,7 +269,7 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
             }
 
             var res = _packageService.GetAllPackageAssignedToRider(queryRequest);
@@ -296,7 +296,7 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is not authorized."));
             }
 
 

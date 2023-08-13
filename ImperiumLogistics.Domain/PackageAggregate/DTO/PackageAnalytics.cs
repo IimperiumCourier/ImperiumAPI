@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ImperiumLogistics.Infrastructure.Models
 {
-    public class RiderAnalytics
+    public class PackageAnalytics
     {
-        public int TotalPackageAvailableForPickUp { get; set; }
-        public int TotalPackagePickedUp { get; set; }
-        public int TotalPackageAvailableForDelivery { get; set; }
+        public int TotalPackageAvailableForPickup { get; set; }
+        public int TotalPackageAtWareHouse { get; set; }
         public int TotalPackageDelivered { get; set; }
+        public int TotalPackageUnDelivered { get; set; }
     }
 }

@@ -80,28 +80,21 @@ namespace ImperiumLogistics.Infrastructure.Repository
 
         public async Task<RiderAnalytics> GetRiderAnalyticsAsync(Guid riderId)
         {
-            string availForPickUpStatus = PackageStatus.AvailableForPickUp.GetString();
-            string pickedUpStatus = PackageStatus.PickedUp.GetString();
-            string deliveryStatus  = PackageStatus.InDelivery.GetString();
+            string unDeliveredStatus  = PackageStatus.UnDelivered.GetString();
             string deliveredStatus = PackageStatus.Delivered.GetString();
 
 
 
-            var pickUpCount = await dbContext.Package.CountAsync(e => e.PickupRider.RiderId == riderId &&
-                                                                      e.Status == availForPickUpStatus);
-            var deliveryCount = await dbContext.Package.CountAsync(e => e.DeliveryRider.RiderId == riderId &&
-                                                                      e.Status == deliveredStatus);
-            var pickedUpCount = await dbContext.Package.CountAsync(e => e.PickupRider.RiderId == riderId &&
-                                                                      e.Status == pickedUpStatus);
+            var unDeliveredCount = await dbContext.Package.CountAsync(e => e.PickupRider.RiderId == riderId &&
+                                                                      e.Status == unDeliveredStatus);
             var deliveredCount = await dbContext.Package.CountAsync(e => e.DeliveryRider.RiderId == riderId &&
                                                                       e.Status == deliveredStatus);
 
             return new RiderAnalytics
             {
-                TotalPackageAvailableForDelivery = deliveryCount,
-                TotalPackageAvailableForPickUp = pickUpCount,
-                TotalPackageDelivered = deliveredCount,
-                TotalPackagePickedUp = pickedUpCount
+                TotalDeliveryAttempted = deliveredCount + unDeliveredCount,
+                TotalDeliveryFailed = unDeliveredCount,
+                TotalDeliverySuccessful = deliveredCount
             };
         }
 
@@ -129,6 +122,29 @@ namespace ImperiumLogistics.Infrastructure.Repository
                 PackageAvailableForPickUp = pickUpCount,
                 PackageDelivered= deliveredCount,
                 PackageUnDelivered = unDeliveredCount
+            };
+        }
+
+        public async Task<PackageAnalytics> GetPackageAnalyticsAsync()
+        {
+            string availForPickUpStatus = PackageStatus.AvailableForPickUp.GetString();
+            string wareHouseStatus = PackageStatus.WareHouse.GetString();
+            string unDeliveredStatus = PackageStatus.UnDelivered.GetString();
+            string deliveredStatus = PackageStatus.Delivered.GetString();
+
+
+
+            var pickUpCount = await dbContext.Package.CountAsync(e => e.Status == availForPickUpStatus);
+            var unDeliveredCount = await dbContext.Package.CountAsync(e => e.Status == unDeliveredStatus);
+            var wareHouseCount = await dbContext.Package.CountAsync(e => e.Status == wareHouseStatus);
+            var deliveredCount = await dbContext.Package.CountAsync(e => e.Status == deliveredStatus);
+
+            return new PackageAnalytics
+            {
+                TotalPackageAtWareHouse = wareHouseCount,
+                TotalPackageAvailableForPickup = pickUpCount,
+                TotalPackageDelivered = deliveredCount,
+                TotalPackageUnDelivered = unDeliveredCount
             };
         }
     }

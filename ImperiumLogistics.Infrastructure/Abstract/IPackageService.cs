@@ -22,5 +22,7 @@ namespace ImperiumLogistics.Infrastructure.Abstract
         Task<ServiceResponse<string>> AssignRiderToPackage(PackageAssignRequest packageAssignRequest, Guid adminId);
         ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackageAssignedToRider(RiderPackageQueryRequest queryRequest);
         ServiceResponse<PagedQueryResult<PackageQueryResponse>> GetAllPackagesInSystem(PackageQueryRequestDTO queryRequest);
+        Task<ServiceResponse<PackageAnalytics>> GetPackageAnalytics();
+        Task<ServiceResponse<RiderAnalytics>> GetRiderAnalytics(Guid riderId);
     }
 }

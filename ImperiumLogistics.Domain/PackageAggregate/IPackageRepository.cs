@@ -1,5 +1,6 @@
 ﻿using ImperiumLogistics.Domain.CompanyAggregate;
 using ImperiumLogistics.Domain.PackageAggregate.DTO;
+using ImperiumLogistics.Infrastructure.Models;
 using ImperiumLogistics.SharedKernel.Enums;
 using System;
 using System.Collections.Generic;
@@ -23,5 +24,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate
         Task<BusinessAnalytics> GetBusinessAnalyticsAsync(Guid businessId);
         IQueryable<Package> GetListByIds(List<Guid> id);
         void UpdateList(List<Package> packages);
+        Task<PackageAnalytics> GetPackageAnalyticsAsync();
+        Task<RiderAnalytics> GetRiderAnalyticsAsync(Guid riderId);
     }
 }

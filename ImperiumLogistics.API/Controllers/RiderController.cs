@@ -3,6 +3,7 @@ using ImperiumLogistics.Domain.PackageAggregate.DTO;
 using ImperiumLogistics.Domain.RiderAggregate.Dto;
 using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Implementation;
+using ImperiumLogistics.Infrastructure.Models;
 using ImperiumLogistics.SharedKernel;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Query;
@@ -24,9 +25,11 @@ namespace ImperiumLogistics.API.Controllers
     public class RiderController : ControllerBase
     {
         private readonly IRiderService riderService;
-        public RiderController(IRiderService riderService)
+        private readonly IPackageService packageService;
+        public RiderController(IRiderService riderService, IPackageService packageService)
         {
             this.riderService = riderService;
+            this.packageService = packageService;
         }
 
         [HttpPost]
@@ -40,12 +43,12 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<PagedQueryResult<GetRiderDto>>.Error("Request is not authorized."));
             }
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ServiceResponse<PagedQueryResult<AdminDto>>.Error("Request is invalid."));
+                return BadRequest(ServiceResponse<PagedQueryResult<GetRiderDto>>.Error("Request is invalid."));
             }
 
             var response = await Task.FromResult(riderService.GetAllRiders(request));
@@ -88,7 +91,7 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<string>.Error("Request is not authorized."));
             }
 
             if (!ModelState.IsValid)
@@ -100,7 +103,7 @@ namespace ImperiumLogistics.API.Controllers
 
             if (riderID == null)
             {
-                return BadRequest(new ServiceResponse<GetRiderDto> { IsSuccessful = false, Message = "Request is invalid." });
+                return BadRequest(new ServiceResponse<string> { IsSuccessful = false, Message = "Request is invalid." });
             }
 
             model.Id = Guid.Parse(riderID.Value);
@@ -126,7 +129,7 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<string>.Error("Request is not authorized."));
             }
 
             if (!ModelState.IsValid)
@@ -142,6 +145,37 @@ namespace ImperiumLogistics.API.Controllers
             }
 
             return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("analytics")]
+        [ProducesResponseType(typeof(ServiceResponse<RiderAnalytics>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<ActionResult> GetAnalytics()
+        {
+            List<string> acceptedRoles = new List<string> { UserRoles.Rider };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<RiderAnalytics>.Error("Request is not authorized."));
+            }
+
+            var riderID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
+
+            if (riderID == null)
+            {
+                return BadRequest(new ServiceResponse<RiderAnalytics> { IsSuccessful = false, Message = "Request is invalid." });
+            }
+
+            Guid riderId = Guid.Parse(riderID.Value);
+            var response = await packageService.GetRiderAnalytics(riderId);
+            if(!response.IsSuccessful)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
     }
 }

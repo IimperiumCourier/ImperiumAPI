@@ -275,6 +275,27 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return ServiceResponse<PagedQueryResult<PackageQueryResponse>>.Error("Request is invalid");
             }
         }
+   
+        public async Task<ServiceResponse<PackageAnalytics>> GetPackageAnalytics()
+        {
+            var analyticsData = await _packageRepository.GetPackageAnalyticsAsync();
+            if(analyticsData == null)
+            {
+                return ServiceResponse<PackageAnalytics>.Error("Package analytics could not loaded.", "Package analytics could not loaded.");
+            }
 
+            return ServiceResponse<PackageAnalytics>.Success(analyticsData);
+        }
+
+        public async Task<ServiceResponse<RiderAnalytics>> GetRiderAnalytics(Guid riderId)
+        {
+            var analyticsData = await _packageRepository.GetRiderAnalyticsAsync(riderId);
+            if (analyticsData == null)
+            {
+                return ServiceResponse<RiderAnalytics>.Error("Rider analytics could not loaded.", "Rider analytics could not loaded.");
+            }
+
+            return ServiceResponse<RiderAnalytics>.Success(analyticsData);
+        }
     }
 }
