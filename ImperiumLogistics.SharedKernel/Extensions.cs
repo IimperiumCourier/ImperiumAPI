@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ImperiumLogistics.SharedKernel.ViewModel;
+using Newtonsoft.Json;
 using System.Globalization;
 
 namespace ImperiumLogistics.SharedKernel
@@ -14,6 +15,11 @@ namespace ImperiumLogistics.SharedKernel
             };
 
             return JsonConvert.SerializeObject(value, Formatting.Indented, settings);
+        }
+
+        public static string ConcatenatePhoneNumber(this PhoneNumberDTO phoneNumber)
+        {
+            return $"{phoneNumber.CountryCode}{phoneNumber.Number}";
         }
 
         public static string ConvertToElevenDigits(this string phoneNumber)

@@ -45,7 +45,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
         }
         public async Task<ServiceResponse<string>> CreateAccount(CompanyAccountCreationRequest request)
         {
-            string phoneNumber = request.PhoneNumber.ConvertToElevenDigits();
+            string phoneNumber = request.PhoneNumber.ConcatenatePhoneNumber().ConvertToElevenDigits();
 
             if(await _companyRepo.HasCompanyAccount(phoneNumber))
             {
@@ -57,7 +57,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 return ServiceResponse<string>.Error($"{request.Email} is tied to an account.");
             }
 
-            var company = await _companyRepo.Add(request.PhoneNumber.ConvertToElevenDigits(), request.Address, request.City,
+            var company = await _companyRepo.Add(phoneNumber, request.Address, request.City,
                                            request.State, request.ContactFullName, request.CompanyName,
                                            request.Email);
 
