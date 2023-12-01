@@ -50,8 +50,8 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 var packageFilters = HandlerFactory.GetPackageFilters();
                 packageFilters.Apply(ref response, queryRequest);
 
-                int pageSize = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
-                int pageNumber = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+                int pageSize = queryRequest.PagedQuery.PageSize();
+                int pageNumber = queryRequest.PagedQuery.PageNumber();
 
                 var result = response.ToPagedResult(pageNumber, pageSize);
 
@@ -205,8 +205,8 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 var packageFilters = HandlerFactory.GetPackageFilters();
                 packageFilters.Apply(ref response, packageRequestDTO);
 
-                int pageSize = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
-                int pageNumber = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+                int pageSize = queryRequest.PagedQuery.PageSize();
+                int pageNumber = queryRequest.PagedQuery.PageNumber();
 
                 var result = response.ToPagedResult(pageNumber, pageSize);
 
@@ -246,8 +246,8 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 var packageFilters = HandlerFactory.GetPackageFilters();
                 packageFilters.Apply(ref response, queryRequest);
 
-                int pageSize = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
-                int pageNumber = queryRequest.PagedQuery != null ? queryRequest.PagedQuery.PageSize : Utility.DefaultPageSize;
+                int pageSize = queryRequest.PagedQuery.PageSize();
+                int pageNumber = queryRequest.PagedQuery.PageNumber();
 
                 var result = response.ToPagedResult(pageNumber, pageSize);
 

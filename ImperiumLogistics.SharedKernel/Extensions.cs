@@ -1,4 +1,5 @@
-﻿using ImperiumLogistics.SharedKernel.ViewModel;
+﻿using ImperiumLogistics.SharedKernel.Query;
+using ImperiumLogistics.SharedKernel.ViewModel;
 using Newtonsoft.Json;
 using System.Globalization;
 
@@ -55,6 +56,20 @@ namespace ImperiumLogistics.SharedKernel
             if (string.IsNullOrWhiteSpace(data)) { return string.Empty; }
 
             return data.Trim().ToLower();
+        }
+
+        public static int PageNumber(this PagedQueryRequest pagedQuery)
+        {
+            if(pagedQuery == null) { return Utility.DefaultPageNumber; }
+
+            return pagedQuery.PageNumber;
+        }
+
+        public static int PageSize(this PagedQueryRequest pagedQuery)
+        {
+            if (pagedQuery == null) { return Utility.DefaultPageSize; }
+
+            return pagedQuery.PageSize;
         }
     }
 }

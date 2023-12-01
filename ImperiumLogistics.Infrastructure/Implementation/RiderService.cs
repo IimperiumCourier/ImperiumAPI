@@ -78,8 +78,8 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                 var filter = RiderHandlerFactory.GetAdminFilters();
                 filter.Apply(ref response, request);
 
-                int pageSize = request.PagedQuery != null ? request.PagedQuery.PageSize : Utility.DefaultPageSize;
-                int pageNumber = request.PagedQuery != null ? request.PagedQuery.PageSize : Utility.DefaultPageSize;
+                int pageSize = request.PagedQuery.PageSize();
+                int pageNumber = request.PagedQuery.PageNumber();
 
                 var result = response.ToPagedResult(pageNumber, pageSize);
 
