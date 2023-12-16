@@ -13,7 +13,7 @@ namespace ImperiumLogistics.Domain.AuthAggregate
         Task<User?> GetAsync(Guid id);
         Task<User?> GetAsync(string email);
         Task<User?> GetByInfoIdAsync(Guid id);
-
+        Task<int> Save();
 
     }
 }

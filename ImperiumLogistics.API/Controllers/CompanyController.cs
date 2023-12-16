@@ -157,5 +157,36 @@ namespace ImperiumLogistics.API.Controllers
 
             return Ok(res);
         }
+
+        [HttpGet]
+        [Route("detail")]
+        [ProducesResponseType(typeof(ServiceResponse<Company>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<ActionResult> GetDetail()
+        {
+            List<string> acceptedRoles = new List<string> { UserRoles.Company };
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+            }
+
+            var companyID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
+            if (companyID == null)
+            {
+                return BadRequest(ServiceResponse<PackageCreationRes>.Error("Request is not authorized."));
+            }
+            Guid companyId = Guid.Parse(companyID.Value);
+
+            var res = await _onboardingService.GetCompanyInformation(companyId);
+
+            if (!res.IsSuccessful)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
     }
 }

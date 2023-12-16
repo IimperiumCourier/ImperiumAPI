@@ -181,5 +181,16 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             }
         }
 
+        public async Task<ServiceResponse<Company>> GetCompanyInformation(Guid companyId)
+        {
+            var company = await _companyRepo.GetById(companyId);
+            if(company is null)
+            {
+                return ServiceResponse<Company>.Error("Company record was not found");
+            }
+
+            return ServiceResponse<Company>.Success(company);
+        }
+
     }
 }

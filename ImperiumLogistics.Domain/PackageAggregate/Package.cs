@@ -69,7 +69,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate
             };
 
             string _serializedString = package.ToJson();
-            _package.QRCode = Utility.CompressToBase64(Utility.GenerateQRCode(_serializedString));
+            _package.QRCode = string.Empty;  //Utility.CompressToBase64(Utility.GenerateQRCode(_serializedString));
 
             return _package;
         }
@@ -88,7 +88,7 @@ namespace ImperiumLogistics.Domain.PackageAggregate
 
         public string GetQRCode()
         {
-            return Utility.DecompressFromBase64(QRCode);
+            return string.Empty;// Utility.DecompressFromBase64(QRCode);
         }
 
         public void AssignPickupRider(Guid riderId, Guid assignedBy)

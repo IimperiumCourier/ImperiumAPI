@@ -19,5 +19,6 @@ namespace ImperiumLogistics.Infrastructure.Abstract
         Task<ServiceResponse<BusinessAnalytics>> GetAnalytics(Guid companyId);
         ServiceResponse<PagedQueryResult<Company>> GetAllCompanies(QueryRequest queryRequest);
         Task<ServiceResponse<string>> UpdateAccount(CompanyAccountUpdateRequest request);
+        Task<ServiceResponse<Company>> GetCompanyInformation(Guid companyId);
     }
 }

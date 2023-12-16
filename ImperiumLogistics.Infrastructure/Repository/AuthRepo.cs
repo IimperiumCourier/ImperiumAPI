@@ -45,5 +45,10 @@ namespace ImperiumLogistics.Infrastructure.Repository
         {
             return dbContext.User.FirstOrDefaultAsync(e => e.UserName == email);
         }
+
+        public Task<int> Save()
+        {
+            return dbContext.SaveChangesAsync();
+        }
     }
 }

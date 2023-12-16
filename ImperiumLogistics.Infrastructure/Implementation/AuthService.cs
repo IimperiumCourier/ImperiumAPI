@@ -36,6 +36,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
                                 Utility.GetNigerianTime().
                                 AddDays(Utility.RefreshTokenValidityInDays));
             await authRepo.UpdateAsync(user);
+            await authRepo.Save();
 
             var tokenData = _tokenGenerator.GenerateToken(user.UserName, user.InformationId, user.Role);
 
@@ -70,6 +71,8 @@ namespace ImperiumLogistics.Infrastructure.Implementation
 
             user.UpdateRefreshToken(_tokenGenerator.GenerateRefreshToken());
             _ = await authRepo.UpdateAsync(user);
+
+            await authRepo.Save();
 
             var tokenData = _tokenGenerator.GenerateToken(user.UserName, user.InformationId, user.Role);
 
