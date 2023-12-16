@@ -84,7 +84,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             return ServiceResponse<string>.Success("An email verification link has been sent to you, kindly check your inbox or spam to verify your email.");
         }
 
-        public async Task<ServiceResponse<string>> UpdateAccount(CompanyAccountUpdateRequest request)
+        public async Task<ServiceResponse<Company>> UpdateAccount(CompanyAccountUpdateRequest request)
         {
             string phoneNumber = request.PhoneNumber.ConvertToElevenDigits();
 
@@ -99,10 +99,10 @@ namespace ImperiumLogistics.Infrastructure.Implementation
 
             if (dbResponse < 1)
             {
-                return ServiceResponse<string>.Error("An error occurred while updating record.");
+                return ServiceResponse<Company>.Error("An error occurred while updating record.");
             }
 
-            return ServiceResponse<string>.Success("Record was updated successfully.");
+            return ServiceResponse<Company>.Success(company, "Record was updated successfully.");
         }
 
         public async Task<ServiceResponse<AuthenticationResponse>> CreatePassword(CompanyPasswordCreationRequest request)

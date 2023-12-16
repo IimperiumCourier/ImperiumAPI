@@ -1,4 +1,5 @@
-﻿using ImperiumLogistics.Domain.RiderAggregate.Dto;
+﻿using ImperiumLogistics.Domain.RiderAggregate;
+using ImperiumLogistics.Domain.RiderAggregate.Dto;
 using ImperiumLogistics.SharedKernel.APIWrapper;
 using ImperiumLogistics.SharedKernel.Query;
 using System;
@@ -14,6 +15,6 @@ namespace ImperiumLogistics.Infrastructure.Abstract
         Task<ServiceResponse<GetRiderDto>> GetRider(Guid id);
         Task<ServiceResponse<string>> AddRider(AddRiderDto rider);
         ServiceResponse<PagedQueryResult<GetRiderDto>> GetAllRiders(QueryRequest request);
-        Task<ServiceResponse<string>> UpdateRider(UpdateRiderDto rider);
+        Task<ServiceResponse<Rider>> UpdateRider(UpdateRiderDto rider);
     }
 }

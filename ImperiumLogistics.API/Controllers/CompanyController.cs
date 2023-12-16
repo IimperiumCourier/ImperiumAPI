@@ -123,14 +123,14 @@ namespace ImperiumLogistics.API.Controllers
 
         [HttpPost]
         [Route("update")]
-        [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse<Company>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<ActionResult> UpdateAccount([FromBody] CompanyAccountUpdateRequest model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+                return BadRequest(ServiceResponse<Company>.Error("Request is invalid."));
             }
 
             List<string> acceptedRoles = new List<string> { UserRoles.Company };

@@ -121,13 +121,13 @@ namespace ImperiumLogistics.Infrastructure.Implementation
             return ServiceResponse<GetRiderDto>.Success(response);
         }
 
-        public async Task<ServiceResponse<string>> UpdateRider(UpdateRiderDto rider)
+        public async Task<ServiceResponse<Rider>> UpdateRider(UpdateRiderDto rider)
         {
             var _rider = await riderRepository.GetRider(rider.Id);
 
             if (_rider == null)
             {
-                return ServiceResponse<string>.Error($"Request is invalid.");
+                return ServiceResponse<Rider>.Error($"Request is invalid.");
             }
 
             _rider.Update(rider);
@@ -137,9 +137,9 @@ namespace ImperiumLogistics.Infrastructure.Implementation
 
             if (dbResponse < 1)
             {
-                return ServiceResponse<string>.Error("An error occurred while saving record.");
+                return ServiceResponse<Rider>.Error("An error occurred while saving record.");
             }
-            return ServiceResponse<string>.Success("Hi, your details were updated successfully.");
+            return ServiceResponse<Rider>.Success(_rider, "Hi, your details were updated successfully.");
         }
 
     }

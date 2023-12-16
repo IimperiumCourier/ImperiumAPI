@@ -1,5 +1,6 @@
 ﻿using ImperiumLogistics.Domain.AdminAggregate.Dto;
 using ImperiumLogistics.Domain.PackageAggregate.DTO;
+using ImperiumLogistics.Domain.RiderAggregate;
 using ImperiumLogistics.Domain.RiderAggregate.Dto;
 using ImperiumLogistics.Infrastructure.Abstract;
 using ImperiumLogistics.Infrastructure.Implementation;
@@ -82,7 +83,7 @@ namespace ImperiumLogistics.API.Controllers
 
         [HttpPost]
         [Route("update")]
-        [ProducesResponseType(typeof(ServiceResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse<Rider>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<ActionResult> UpdateAccount([FromBody] UpdateRiderDto model)
@@ -91,19 +92,19 @@ namespace ImperiumLogistics.API.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
-                return BadRequest(ServiceResponse<string>.Error("Request is not authorized."));
+                return BadRequest(ServiceResponse<Rider>.Error("Request is not authorized."));
             }
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ServiceResponse<string>.Error("Request is invalid."));
+                return BadRequest(ServiceResponse<Rider>.Error("Request is invalid."));
             }
 
             var riderID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
 
             if (riderID == null)
             {
-                return BadRequest(new ServiceResponse<string> { IsSuccessful = false, Message = "Request is invalid." });
+                return BadRequest(new ServiceResponse<Rider> { IsSuccessful = false, Message = "Request is invalid." });
             }
 
             model.Id = Guid.Parse(riderID.Value);
