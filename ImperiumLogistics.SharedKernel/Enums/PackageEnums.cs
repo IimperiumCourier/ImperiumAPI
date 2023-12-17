@@ -14,7 +14,8 @@ namespace ImperiumLogistics.SharedKernel.Enums
         InDelivery,
         UnDelivered,
         SLABreach,
-        Delivered
+        Delivered,
+        All
     }
 
     public static class PackageStatusExtension

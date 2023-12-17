@@ -72,6 +72,11 @@ namespace ImperiumLogistics.Infrastructure.Repository
         public IQueryable<Package> GetAllByRiderId(Guid riderId, PackageStatus packageStatus)
         {
             string _status = packageStatus.GetString();
+            if (packageStatus.Equals(PackageStatus.All))
+            {
+                return dbContext.Package.Where(item => item.PickupRider.RiderId == riderId
+                                                    || item.DeliveryRider.RiderId == riderId);
+            }
 
             return dbContext.Package.Where(item => (item.PickupRider.RiderId == riderId 
                                                     || item.DeliveryRider.RiderId == riderId) 
