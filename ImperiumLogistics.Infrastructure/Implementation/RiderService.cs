@@ -35,12 +35,12 @@ namespace ImperiumLogistics.Infrastructure.Implementation
 
         public async Task<ServiceResponse<string>> AddRider(AddRiderDto rider)
         {
-            if(await riderRepository.IsConnectedToRecord(rider.Email))
+            if(await riderRepository.IsConnectedToRecord(rider.Email) || await authRepo.IsConnectedToRecord(rider.Email))
             {
                 return ServiceResponse<string>.Error($"{rider.Email} is tied to an account.");
             }
 
-            if (await riderRepository.IsConnectedToRecord(rider.PhoneNumber))
+            if (await riderRepository.IsConnectedToRecord(rider.PhoneNumber) || await authRepo.IsConnectedToRecord(rider.PhoneNumber))
             {
                 return ServiceResponse<string>.Error($"{rider.PhoneNumber} is tied to an account.");
             }

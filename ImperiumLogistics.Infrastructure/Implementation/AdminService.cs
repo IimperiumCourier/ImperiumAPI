@@ -32,7 +32,7 @@ namespace ImperiumLogistics.Infrastructure.Implementation
 
         public async Task<ServiceResponse<string>> CreateAdmin(AdminCreationRequest request)
         {
-            if(await adminRepository.GetByEmail(request.Email) != null)
+            if(await adminRepository.GetByEmail(request.Email) != null || await authRepository.IsConnectedToRecord(request.Email))
             {
                 return ServiceResponse<string>.Error("Hi, email address provided is connected to a profile.");
             }

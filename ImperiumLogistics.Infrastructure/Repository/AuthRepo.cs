@@ -46,6 +46,13 @@ namespace ImperiumLogistics.Infrastructure.Repository
             return dbContext.User.FirstOrDefaultAsync(e => e.UserName == email);
         }
 
+        public Task<bool> IsConnectedToRecord(string email)
+        {
+            string searchCriteria = email.Trim().ToLower();
+            return dbContext.User.AnyAsync(e => e.PhoneNumber == searchCriteria ||
+                                                   e.UserName == searchCriteria);
+        }
+
         public Task<int> Save()
         {
             return dbContext.SaveChangesAsync();

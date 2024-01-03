@@ -88,7 +88,7 @@ namespace ImperiumLogistics.API.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<ActionResult> UpdateAccount([FromBody] UpdateRiderDto model)
         {
-            List<string> acceptedRoles = new List<string> { UserRoles.Rider };
+            List<string> acceptedRoles = new List<string> { UserRoles.Rider, UserRoles.Admin };
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             if (roleClaim == null || !acceptedRoles.Contains(roleClaim.Value))
             {
@@ -100,14 +100,24 @@ namespace ImperiumLogistics.API.Controllers
                 return BadRequest(ServiceResponse<Rider>.Error("Request is invalid."));
             }
 
-            var riderID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
-
-            if (riderID == null)
+            if(roleClaim.Value == UserRoles.Rider)
             {
-                return BadRequest(new ServiceResponse<Rider> { IsSuccessful = false, Message = "Request is invalid." });
-            }
+                var riderID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
 
-            model.Id = Guid.Parse(riderID.Value);
+                if (riderID == null)
+                {
+                    return BadRequest(new ServiceResponse<Rider> { IsSuccessful = false, Message = "Request is invalid." });
+                }
+
+                model.Id = Guid.Parse(riderID.Value);
+            }else if(roleClaim.Value == UserRoles.Admin)
+            {
+                if(model.Id == Guid.Empty)
+                {
+                    return BadRequest(ServiceResponse<Rider>.Error("Hi, rider's Id is invalid."));
+                }
+            }
+            
 
             var res = await riderService.UpdateRider(model);
 

@@ -14,6 +14,6 @@ namespace ImperiumLogistics.Domain.AuthAggregate
         Task<User?> GetAsync(string email);
         Task<User?> GetByInfoIdAsync(Guid id);
         Task<int> Save();
-
+        Task<bool> IsConnectedToRecord(string email);
     }
 }

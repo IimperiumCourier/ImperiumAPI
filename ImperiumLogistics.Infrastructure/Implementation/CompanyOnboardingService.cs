@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImperiumLogistics.Infrastructure.Repository;
 
 namespace ImperiumLogistics.Infrastructure.Implementation
 {
@@ -47,12 +48,14 @@ namespace ImperiumLogistics.Infrastructure.Implementation
         {
             string phoneNumber = request.PhoneNumber.ConcatenatePhoneNumber().ConvertToElevenDigits();
 
-            if(await _companyRepo.HasCompanyAccount(phoneNumber))
+            if(await _companyRepo.HasCompanyAccount(phoneNumber) ||
+               await _authRepo.IsConnectedToRecord(phoneNumber))
             {
                 return ServiceResponse<string>.Error($"{phoneNumber} is tied to an account.");
             }
 
-            if(await _companyRepo.HasCompanyAccount(request.Email))
+            if(await _companyRepo.HasCompanyAccount(request.Email) ||
+               await _authRepo.IsConnectedToRecord(request.Email))
             {
                 return ServiceResponse<string>.Error($"{request.Email} is tied to an account.");
             }
